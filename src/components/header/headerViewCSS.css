@@ -1,0 +1,29 @@
+.companyTitleStyle {
+  color: #FEFEFE;
+  font-size: 30px;
+  padding-left: 15px;
+  line-height: 80px; }
+
+.titleStyle {
+  color: #FEFEFE; }
+
+.accountOptionButtonStyle {
+  margin-right: 15px;
+  margin-top: 15px;
+  padding-top: 5px;
+  padding-bottom: 0px;
+  float: right; }
+
+.logoutTextStyle {
+  padding-left: 15px;
+  color: #303a29 !important;
+  font-size: 16px;
+  vertical-align: super !important; }
+
+.logoutTextStyle:hover {
+  text-decoration: none !important; }
+
+.headerView_headerStyle {
+  height: 80px;
+  width: 100%;
+  background: #5E6B4E; }
