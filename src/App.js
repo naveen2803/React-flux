@@ -5,6 +5,9 @@ import './App.css';
 import LoginView from './components/login/loginView';
 import Orders from './components/orders/orders';
 import Customers from './components/customers/customerView';
+import Suppliers from './components/suppliers/supplierView';
+import Users from './components/users/userView';
+import Items from './components/items/itemView';
 import UnAuthorised from './components/unAuthorised/unAuthorisedView';
 
 class App extends Component {
@@ -55,8 +58,11 @@ class App extends Component {
                     username={this.state.username}
                     password={this.state.password}
                     onChange={this.onChange}/>} />
+                <Route exact path="/items" component={Items}/>
                 <Route exact path="/orders" component={Orders}/>
                 <Route exact path="/customers" component={Customers}/>
+                <Route exact path="/suppliers" component={Suppliers}/>
+                <Route exact path="/users" component={Users}/>
                 <Route exact path="/notAuthorised" component={UnAuthorised}/>
             </div>
           </Router>

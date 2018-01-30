@@ -1,0 +1,36 @@
+@import '../../styles/variables.scss';
+
+.userView_actionBarItemStyle {
+    padding: 10px;
+    flex-basis: auto;
+}
+
+.userView_actionBarContainerStyle {
+    display: flex;
+}
+
+.userView_loadingContainerStyle {
+    display: flex;
+    justify-content: center;
+}
+
+.userView_loadingTextStyle {
+    position: relative;
+    top: 45px;
+    left: -65px;
+    font-size: 20px;
+    color: $primaryColor;
+}
+
+.userView_loadingTDStyle {
+    column-span: all;
+    height: 100px
+}
+
+.userView_errorTextStyle {
+    position: relative;
+    top: 80px;
+    left: -125px;
+    font-size: 20px;
+    color: $primaryColor;
+}

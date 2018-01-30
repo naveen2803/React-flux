@@ -60,7 +60,7 @@ class HeaderComp extends React.Component{
         if(decoded.role === "admin")
         {
             this.setState({
-                menuItems: ['Add user', 'Orders', 'Items', 'Suppliers', 'Customers']
+                menuItems: ['Users', 'Orders', 'Items', 'Suppliers', 'Customers']
             });
         }
 
@@ -128,9 +128,9 @@ class HeaderComp extends React.Component{
 
     addMenuItem(menuItem, index) {
         switch(menuItem) {
-            case "Add user": {
+            case "Users": {
                 return (
-                    <div key={index}><IconAddUser width="20" height="20"/> <Button color="link" name="addUser" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
+                    <div key={index}><IconAddUser width="20" height="20"/> <Button color="link" name="users" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
                 );
             }
             case "Orders": {

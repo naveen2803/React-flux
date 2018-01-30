@@ -1,0 +1,28 @@
+.itemView_actionBarItemStyle {
+  padding: 10px;
+  flex-basis: auto; }
+
+.itemView_actionBarContainerStyle {
+  display: flex; }
+
+.itemView_loadingContainerStyle {
+  display: flex;
+  justify-content: center; }
+
+.itemView_loadingTextStyle {
+  position: relative;
+  top: 45px;
+  left: -65px;
+  font-size: 20px;
+  color: #5E6B4E; }
+
+.itemView_loadingTDStyle {
+  column-span: all;
+  height: 100px; }
+
+.itemView_errorTextStyle {
+  position: relative;
+  top: 80px;
+  left: -125px;
+  font-size: 20px;
+  color: #5E6B4E; }
