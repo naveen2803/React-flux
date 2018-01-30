@@ -1,0 +1,36 @@
+@import '../../styles/variables.scss';
+
+.customersView_actionBarItemStyle {
+    padding: 10px;
+    flex-basis: auto;
+}
+
+.customersView_actionBarContainerStyle {
+    display: flex;
+}
+
+.customersView_loadingContainerStyle {
+    display: flex;
+    justify-content: center;
+}
+
+.customersView_loadingTextStyle {
+    position: relative;
+    top: 45px;
+    left: -65px;
+    font-size: 20px;
+    color: $primaryColor;
+}
+
+.customersView_loadingTDStyle {
+    column-span: all;
+    height: 100px
+}
+
+.customersView_errorTextStyle {
+    position: relative;
+    top: 80px;
+    left: -125px;
+    font-size: 20px;
+    color: $primaryColor;
+}

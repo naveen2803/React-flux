@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .orders_actionBarItemStyle {
     padding: 10px;
     flex-basis: auto;
@@ -10,4 +12,17 @@
 .orders_loadingContainerStyle {
     display: flex;
     justify-content: center;
+}
+
+.orders_loadingTextStyle {
+    position: relative;
+    top: 45px;
+    left: -65px;
+    font-size: 20px;
+    color: $primaryColor;
+}
+
+.orders_loadingTDStyle {
+    column-span: all;
+    height: 100px
 }

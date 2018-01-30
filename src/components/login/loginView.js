@@ -52,7 +52,7 @@ class LoginView extends React.Component{
         if(event.status === "SUCCESS") {
             var token = jwt.sign({ username: event.username, role:'admin' }, event.secret);
             sessionStorage.setItem("token", token);
-            self.props.history.push("/main");
+            self.props.history.push("/orders");
         }
         else {
             alert("Wrong username or password!");

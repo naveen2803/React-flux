@@ -8,6 +8,13 @@ import keyMirror from 'key-mirror';
 export default keyMirror({
 	LOGIN_EVENT: null,
 	LOGOUT_EVENT: null,
+
 	GET_ORDERS_EVENT: null,
-	GET_SUPPLIERS_EVENT: null
+	ADD_ORDER_EVENT: null,
+
+	GET_SUPPLIERS_EVENT: null,
+	ADD_SUPPLIER_EVENT: null,
+
+	GET_CUSTOMERS_EVENT: null,
+	ADD_CUSTOMER_EVENT: null
 });

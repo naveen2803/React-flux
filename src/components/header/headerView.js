@@ -63,6 +63,10 @@ class HeaderComp extends React.Component{
                 menuItems: ['Add user', 'Orders', 'Items', 'Suppliers', 'Customers']
             });
         }
+
+        var element = document.getElementById("wrapper");
+        element.classList.remove("wrapperSolidStyle");
+        element.classList.add("wrapperPatternStyle");
     }
 
     componentWillUnmount() {
@@ -100,7 +104,6 @@ class HeaderComp extends React.Component{
 
     logout() {
         sessionStorage.removeItem("token");
-        console.log(this);
         this.props.history.push("/");
     }
 
@@ -132,7 +135,7 @@ class HeaderComp extends React.Component{
             }
             case "Orders": {
                 return (
-                    <div key={index}><IconOrders width="20" height="20"/> <Button color="link" name="main" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
+                    <div key={index}><IconOrders width="20" height="20"/> <Button color="link" name="orders" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
                 );
             }
             case "Items": {

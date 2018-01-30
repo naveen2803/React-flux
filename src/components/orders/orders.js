@@ -11,6 +11,7 @@ import OrderActions from '../../actions/orderActions';
 import SupplierStore from '../../stores/supplierStore';
 import SupplierActions from '../../actions/supplierActions';
 import IconLoading from '../../assets/iconLoading';
+import IconCloudError from '../../assets/iconCloudError';
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
@@ -35,7 +36,6 @@ class Orders extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: "1",
             showpopup: false,
             filteredOrders: [],
             orignalOrders: [],
@@ -99,7 +99,6 @@ class Orders extends React.Component{
                 <div>
                     <HeaderComp {...this.props} title="Orders"/>
                     <AddOrderPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} suppliers={this.state.suppliers}/>
-
                     <div className="orders_actionBarContainerStyle">
                         <div className="orders_actionBarItemStyle">
                             <Button className="appButtonStyle" onClick={this.toggleModel}>Add Order</Button>
@@ -121,7 +120,7 @@ class Orders extends React.Component{
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.loadingStatus == 0?<div className="orders_loadingContainerStyle"><IconLoading width="50" height="40"/></div>:(this.state.loadingStatus == 1?"":<span>2</span>)}
+                            {this.state.loadingStatus == 0?<tr><td colSpan="6" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="6" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
                             {this.state.filteredOrders.map(this.rowElement.bind(this))}
                         </tbody>
                   </Table>
@@ -147,10 +146,6 @@ class Orders extends React.Component{
         //For flux
         OrderStore.addChangeListener(EventTypes.GET_ORDERS_EVENT, this.cb_onGetOrdersResult);
         SupplierStore.addChangeListener(EventTypes.GET_SUPPLIERS_EVENT, this.cb_onGetSuppliersResult);
-
-        var element = document.getElementById("wrapper");
-        element.classList.remove("wrapperSolidStyle");
-        element.classList.add("wrapperPatternStyle");
     }
 
     componentWillUnmount() {
@@ -177,6 +172,9 @@ class Orders extends React.Component{
         }
         else {
             toastr.error("Loading the data", "Error");
+            this.setState({
+                loadingStatus: 2
+            });
         }
     }
 
