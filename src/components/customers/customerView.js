@@ -10,11 +10,9 @@ import CustomerStore from '../../stores/customerStore';
 import CustomerActions from '../../actions/customerActions';
 import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
-
+import { decodeToken } from '../../utils/secret';
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
-
-import jwt from 'jsonwebtoken';
 import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
@@ -102,7 +100,7 @@ class CustomerView extends React.Component{
     checkAuthorization() {
         let token = sessionStorage.getItem("token");
         try {
-            var decoded = jwt.verify(token, 'secret key');
+            var decoded = decodeToken(token);
             if(decoded.role === "ADMIN") {
                 return(
                     <div>

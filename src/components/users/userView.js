@@ -10,11 +10,13 @@ import UserStore from '../../stores/userStore';
 import UserActions from '../../actions/userActions';
 import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
+import IconEdit from '../../assets/iconEdit';
+import IconDelete from '../../assets/iconDelete';
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
 
-import jwt from 'jsonwebtoken';
+import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
@@ -43,14 +45,16 @@ class UserView extends React.Component{
             loadingStatus:0
         };
 
-
         this.updateSearch = this.updateSearch.bind(this);
         //this.showCustomerForm = this.showCustomerForm.bind(this);
         this.toggleModel = this.toggleModel.bind(this);
         this.cb_onGetUsersResult = this.cb_onGetUsersResult.bind(this);
 
+        this.editUser = this.editUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+
         // Action calls
-        UserActions.getUsers();
+        UserActions.getUsers(sessionStorage.getItem("token"));
     }
 
     /**
@@ -91,11 +95,13 @@ class UserView extends React.Component{
         let value = event.target.value;
         this.setState({
             filteredUsers: this.state.orignalUsers.filter(user => {
-                if( user.s_name.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  user.s_address.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  user.s_phone.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  user.description.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  user.s_gst.toUpperCase().indexOf(value.toUpperCase()) >= 0)
+                if( user.firstname.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.lastname.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.address.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.email.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.username.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.password.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.phone.toUpperCase().indexOf(value.toUpperCase()) >= 0)
                     return true;
                 else return false;
             })
@@ -105,19 +111,34 @@ class UserView extends React.Component{
     rowElement(item, index) {
         return(
             <tr key={index}>
-                <td>{item.s_name}</td>
-                <td>{item.s_address}</td>
-                <td>{item.s_phone}</td>
-                <td>{item.description}</td>
-                <td>{item.s_gst}</td>
+                <td>{item.firstname} {item.lastname}</td>
+                <td>{item.address}</td>
+                <td>{item.phone}</td>
+                <td>{item.email}</td>
+                <td>{item.username}</td>
+                <td>{item.password}</td>
+                <td><span className="padding10 handCursor" data-userid={item.user_id} onClick={this.editUser}><IconEdit width="18" height="18"/></span><span data-userid={item.user_id} className="padding10 handCursor" onClick={this.deleteUser}><IconDelete width="18" height="18"/></span></td>
             </tr>
         );
+    }
+
+    editUser(event) {
+        console.log(event.currentTarget.getAttribute("data-userid"));
+    }
+
+    deleteUser(event) {
+        console.log(event.currentTarget.getAttribute("data-userid"));
+        var arr = this.state.orignalUsers.filter(user => user.user_id != event.currentTarget.getAttribute("data-userid"));
+        this.setState({
+            filteredUsers : arr,
+            orignalUsers : arr
+        });
     }
 
     checkAuthorization() {
         let token = sessionStorage.getItem("token");
         try {
-            var decoded = jwt.verify(token, 'secret key');
+            var decoded = decodeToken(token);
             if(decoded.role === "ADMIN") {
                 return(
                     <div>
@@ -136,8 +157,10 @@ class UserView extends React.Component{
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>Phone</th>
-                                    <th>Description</th>
-                                    <th>GST</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

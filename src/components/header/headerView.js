@@ -5,7 +5,7 @@
 
 import React from 'react';
 import './headerViewCSS.css';
-import jwt from 'jsonwebtoken';
+import { decodeToken } from '../../utils/secret';
 import IconThreeBars from '../../assets/iconThreeBars';
 import IconLogout from '../../assets/iconLogout';
 import IconKey from '../../assets/iconKey';
@@ -53,42 +53,23 @@ class HeaderComp extends React.Component{
      * WHY: Good spot to set initial state
     */
     componentWillMount() {
-        //For flux
-        //MyStore.addChangeListener(this._onChange);
+        var token = sessionStorage.getItem("token");
+        try {
+            var decoded = decodeToken(token);
+            if(decoded.role === "ADMIN")
+            {
+                this.setState({
+                    menuItems: ['Items', 'Users', 'Orders', 'Suppliers', 'Customers']
+                });
+            }
 
-        var decoded = jwt.verify(sessionStorage.getItem("token"), 'secret key');
-        console.log(decoded);
-        if(decoded.role === "ADMIN")
-        {
-            this.setState({
-                menuItems: ['Items', 'Users', 'Orders', 'Suppliers', 'Customers']
-            });
+            var element = document.getElementById("wrapper");
+            element.classList.remove("wrapperSolidStyle");
+            element.classList.add("wrapperPatternStyle");
         }
-
-        var element = document.getElementById("wrapper");
-        element.classList.remove("wrapperSolidStyle");
-        element.classList.add("wrapperPatternStyle");
-    }
-
-    componentWillUnmount() {
-        //For flux
-        //MyStore.removeChangeListener(this._onChange);
-    }
-
-    /**
-     * WHEN: After render
-     * WHY: Access DOM, integrate with frameworks, set timers, AJAX requests
-    */
-    componentDidMount() {
-
-    }
-
-    /**
-     * WHEN: When receiving new props. Not called on initial render
-     * WHY: Set state before render
-    */
-    componentWillReceiveProps(nextProps) {
-
+        catch(error) {
+            console.log(error);
+        }
     }
 
     toggle() {

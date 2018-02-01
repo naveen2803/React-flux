@@ -16,7 +16,7 @@ import IconCloudError from '../../assets/iconCloudError';
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
 
-import jwt from 'jsonwebtoken';
+import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
@@ -92,7 +92,7 @@ class Orders extends React.Component{
     checkAuthorization() {
         let token = sessionStorage.getItem("token");
         try {
-            var decoded = jwt.verify(token, 'secret key');
+            var decoded = decodeToken(token);
             if(decoded.role === "ADMIN") {
                 return(
                     <div>
@@ -181,7 +181,6 @@ class Orders extends React.Component{
     }
 
     cb_onGetSuppliersResult(event) {
-        console.log("Suppliers", event.suppliers);
         if(event.status === "SUCCESS") {
             this.setState({
                 suppliers: event.suppliers

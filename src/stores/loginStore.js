@@ -29,7 +29,6 @@ Dispatcher.register(function(action) {
     switch(action.actionType) {
         case ActionTypes.LOGIN: {
             // call service to check the login credentials and trigger event accordingly
-
             var options = {
                 url: 'http://localhost:4000/checkUser',
                 method: "POST",
@@ -47,12 +46,6 @@ Dispatcher.register(function(action) {
                     }
                     LoginStore.emitChange(EventTypes.LOGIN_EVENT, {eventName: "Login_Event", secret: "secret key", user: userData, status: requestStatus});
                 }
-            })
-            request.post('', function(error, response, body) {
-
-
-
-
             });
 
             break;

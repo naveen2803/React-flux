@@ -73,3 +73,11 @@ html, body {
     background-color: #303a29 !important;
     border-color: #303a29 !important;
 }
+
+.padding10 {
+    padding: 10px;
+}
+
+.handCursor {
+    cursor: pointer;
+}

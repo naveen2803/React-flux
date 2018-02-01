@@ -7,11 +7,13 @@ import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 var UserActions = {
-    getUsers: function() {
+    getUsers: function(token) {
         console.log("I am going to fetch users");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_USERS,
-            data: ""
+            data: {
+                token: token
+            }
         });
     }
 };

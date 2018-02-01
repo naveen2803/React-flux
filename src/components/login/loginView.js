@@ -4,13 +4,12 @@
 */
 
 import React from 'react';
-import jwt from 'jsonwebtoken';
 import './loginViewCSS.css';
 import EventTypes from '../../constants/eventTypes';
 import LoginStore from '../../stores/loginStore';
 import LoginActions from '../../actions/loginActions';
 import IconFlame from '../../assets/iconFlame';
-import KeyGen from '../../utils/secret';
+import { generateToken } from '../../utils/secret';
 
 import { Button, Label, Input, FormGroup, Form } from 'reactstrap';
 
@@ -25,7 +24,6 @@ class LoginView extends React.Component{
 
         this.loginClick = this.loginClick.bind(this);
         self = this;
-        console.log("keygen ", KeyGen.generate());
     }
 
     /**
@@ -54,7 +52,7 @@ class LoginView extends React.Component{
     cb_onLoginResult(event) {
         if(event.status === "SUCCESS") {
             console.log(event);
-            var token = jwt.sign({ username: event.user.username, role:event.user[0].role }, event.secret);
+            var token = generateToken(event.user.username, event.user[0].role);
             sessionStorage.setItem("token", token);
             self.props.history.push("/items");
         }
@@ -102,14 +100,6 @@ class LoginView extends React.Component{
             </div>
         );
     }
-}
-
-LoginView.propTypes = {
-
-}
-
-LoginView.defaultProps = {
-
 }
 
 export default LoginView;

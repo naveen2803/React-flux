@@ -29,17 +29,24 @@ Dispatcher.register(function(action) {
     switch(action.actionType) {
         case ActionTypes.GET_USERS: {
             // call service to check the login credentials and trigger event accordingly
-            request.get('https://wt-naveen-malhotra28-gmail-com-0.run.webtask.io/getUsers', function(error, response, body) {
-                let requestStatus = "ERROR";
-                let usersData;
-                var result = JSON.parse(body);
-                if(result.code == undefined) {
-                    requestStatus = "SUCCESS";
-                    usersData = result;
-                }
+            var options = {
+                url: 'http://localhost:4000/getUsers',
+                method: "POST",
+                form: {'token': action.data.token}
+            };
 
-                UserStore.emitChange(EventTypes.GET_USERS_EVENT, {eventName: "GET_USERS", users: usersData, status: requestStatus});
-            });
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let usersData;
+                    var result = JSON.parse(body);
+                    if(result.length > 0) {
+                        requestStatus = "SUCCESS";
+                        usersData = result;
+                    }
+                    UserStore.emitChange(EventTypes.GET_USERS_EVENT, {eventName: "GET_USERS", users: usersData, status: requestStatus});
+                }
+            })
             break;
         }
 
