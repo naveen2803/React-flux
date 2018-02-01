@@ -29,8 +29,6 @@ import HeaderComp from '../header/headerView';
 import AddOrderPopup from './addOrderPopup';
 import { Table } from 'reactstrap';
 import './ordersCSS.css';
-let adminTabs = ['Orders', 'Customers', 'Suppliers', 'Items', 'Users'];
-let employeeTabs = ['Items'];
 
 class Orders extends React.Component{
     constructor(props) {
@@ -95,38 +93,42 @@ class Orders extends React.Component{
         let token = sessionStorage.getItem("token");
         try {
             var decoded = jwt.verify(token, 'secret key');
-            return(
-                <div>
-                    <HeaderComp {...this.props} title="Orders"/>
-                    <AddOrderPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} suppliers={this.state.suppliers}/>
-                    <div className="orders_actionBarContainerStyle">
-                        <div className="orders_actionBarItemStyle">
-                            <Button className="appButtonStyle" onClick={this.toggleModel}>Add Order</Button>
+            if(decoded.role === "ADMIN") {
+                return(
+                    <div>
+                        <HeaderComp {...this.props} title="Orders"/>
+                        <AddOrderPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} suppliers={this.state.suppliers}/>
+                        <div className="orders_actionBarContainerStyle">
+                            <div className="orders_actionBarItemStyle">
+                                <Button className="appButtonStyle" onClick={this.toggleModel}>Add Order</Button>
+                            </div>
+                            <div className="orders_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                            </div>
                         </div>
-                        <div className="orders_actionBarItemStyle">
-                            <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                        </div>
-                    </div>
-                    <Table responsive>
-                        <thead>
-                            <tr>
-                                <th>Buyer Order Number</th>
-                                <th>Order Date</th>
-                                <th>Item ID</th>
-                                <th>Cost</th>
-                                <th>Qty</th>
-                                <th>Supplier ID</th>
-                                <th>Supplier Order Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="6" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="6" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                            {this.state.filteredOrders.map(this.rowElement.bind(this))}
-                        </tbody>
-                  </Table>
-              </div>
-            );
-
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>Buyer Order Number</th>
+                                    <th>Order Date</th>
+                                    <th>Item ID</th>
+                                    <th>Cost</th>
+                                    <th>Qty</th>
+                                    <th>Supplier ID</th>
+                                    <th>Supplier Order Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.loadingStatus == 0?<tr><td colSpan="6" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="6" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                                {this.state.filteredOrders.map(this.rowElement.bind(this))}
+                            </tbody>
+                      </Table>
+                  </div>
+                );
+            }
+            else {
+                return(<Redirect to="/notAuthorised"/>);
+            }
         }
         catch(error) {
             console.log(error);

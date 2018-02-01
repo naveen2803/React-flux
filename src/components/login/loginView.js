@@ -14,6 +14,9 @@ import KeyGen from '../../utils/secret';
 
 import { Button, Label, Input, FormGroup, Form } from 'reactstrap';
 
+import toastr from 'toastr';
+import 'toastr/build/toastr.css'
+
 let self;
 class LoginView extends React.Component{
     constructor(props) {
@@ -50,12 +53,13 @@ class LoginView extends React.Component{
 
     cb_onLoginResult(event) {
         if(event.status === "SUCCESS") {
-            var token = jwt.sign({ username: event.username, role:'admin' }, event.secret);
+            console.log(event);
+            var token = jwt.sign({ username: event.user.username, role:event.user[0].role }, event.secret);
             sessionStorage.setItem("token", token);
-            self.props.history.push("/orders");
+            self.props.history.push("/items");
         }
         else {
-            alert("Wrong username or password!");
+            toastr.error("Wrong username or password!", "Error");
         }
     }
 

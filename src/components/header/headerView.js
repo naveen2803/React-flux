@@ -37,7 +37,7 @@ class HeaderComp extends React.Component{
         this.state = {
             popoverOpen: false,
             modal: false,
-            menuItems: []
+            menuItems: ["Items"]
         };
 
         this.toggle = this.toggle.bind(this);
@@ -57,10 +57,11 @@ class HeaderComp extends React.Component{
         //MyStore.addChangeListener(this._onChange);
 
         var decoded = jwt.verify(sessionStorage.getItem("token"), 'secret key');
-        if(decoded.role === "admin")
+        console.log(decoded);
+        if(decoded.role === "ADMIN")
         {
             this.setState({
-                menuItems: ['Users', 'Orders', 'Items', 'Suppliers', 'Customers']
+                menuItems: ['Items', 'Users', 'Orders', 'Suppliers', 'Customers']
             });
         }
 

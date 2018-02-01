@@ -9,6 +9,7 @@ import Suppliers from './components/suppliers/supplierView';
 import Users from './components/users/userView';
 import Items from './components/items/itemView';
 import UnAuthorised from './components/unAuthorised/unAuthorisedView';
+import PageNotFound from './components/pageNotFound/pageNotFound';
 
 class App extends Component {
 
@@ -53,17 +54,20 @@ class App extends Component {
         return (
           <Router>
             <div>
-                <Route exact path="/" render={(props) => <LoginView
-                    {...props}
-                    username={this.state.username}
-                    password={this.state.password}
-                    onChange={this.onChange}/>} />
-                <Route exact path="/items" component={Items}/>
-                <Route exact path="/orders" component={Orders}/>
-                <Route exact path="/customers" component={Customers}/>
-                <Route exact path="/suppliers" component={Suppliers}/>
-                <Route exact path="/users" component={Users}/>
-                <Route exact path="/notAuthorised" component={UnAuthorised}/>
+                <Switch>
+                    <Route exact path="/" render={(props) => <LoginView
+                        {...props}
+                        username={this.state.username}
+                        password={this.state.password}
+                        onChange={this.onChange}/>} />
+                    <Route exact path="/items" component={Items}/>
+                    <Route exact path="/orders" component={Orders}/>
+                    <Route exact path="/customers" component={Customers}/>
+                    <Route exact path="/suppliers" component={Suppliers}/>
+                    <Route exact path="/users" component={Users}/>
+                    <Route path="/notAuthorised" component={UnAuthorised}/>
+                    <Route component={PageNotFound}/>
+                </Switch>
             </div>
           </Router>
 

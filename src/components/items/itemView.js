@@ -114,34 +114,49 @@ class ItemView extends React.Component{
         );
     }
 
+    checkAuthorization() {
+        let token = sessionStorage.getItem("token");
+        try {
+            var decoded = jwt.verify(token, 'secret key');
+            return(
+                <div>
+                    <HeaderComp {...this.props} title="Items"/>
+                    <div className="itemView_actionBarContainerStyle">
+                        <div className="itemView_actionBarItemStyle">
+                            <Button className="appButtonStyle">Add Item</Button>
+                        </div>
+                        <div className="itemView_actionBarItemStyle">
+                            <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                        </div>
+                    </div>
+                    <Table responsive>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Description</th>
+                                <th>GST</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                        {this.state.filteredItems.map(this.rowElement.bind(this))}
+                        </tbody>
+                  </Table>
+                </div>
+            );
+
+        }
+        catch(error) {
+            console.log(error);
+            return(<Redirect to="/notAuthorised"/>);
+        }
+    }
+
     render (){
         return (
-            <div>
-                <HeaderComp {...this.props} title="Items"/>
-                <div className="itemView_actionBarContainerStyle">
-                    <div className="itemView_actionBarItemStyle">
-                        <Button className="appButtonStyle">Add Item</Button>
-                    </div>
-                    <div className="itemView_actionBarItemStyle">
-                        <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                    </div>
-                </div>
-                <Table responsive>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Phone</th>
-                            <th>Description</th>
-                            <th>GST</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                    {this.state.filteredItems.map(this.rowElement.bind(this))}
-                    </tbody>
-              </Table>
-            </div>
+            this.checkAuthorization()
         );
     }
 }

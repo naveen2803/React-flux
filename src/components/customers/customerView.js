@@ -99,34 +99,53 @@ class CustomerView extends React.Component{
         );
     }
 
+    checkAuthorization() {
+        let token = sessionStorage.getItem("token");
+        try {
+            var decoded = jwt.verify(token, 'secret key');
+            if(decoded.role === "ADMIN") {
+                return(
+                    <div>
+                        <HeaderComp {...this.props} title="Customers"/>
+                        <div className="customersView_actionBarContainerStyle">
+                            <div className="customersView_actionBarItemStyle">
+                                <Button className="appButtonStyle">Add Customer</Button>
+                            </div>
+                            <div className="customersView_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" placeholder="Search"/>
+                            </div>
+                        </div>
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Description</th>
+                                    <th>GST</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.filteredCustomers.map(this.rowElement.bind(this))}
+                            </tbody>
+                      </Table>
+                    </div>
+                );
+            }
+            else {
+                return(<Redirect to="/notAuthorised"/>);
+            }
+        }
+        catch(error) {
+            console.log(error);
+            return(<Redirect to="/notAuthorised"/>);
+        }
+    }
+
     render (){
         return (
-            <div>
-                <HeaderComp {...this.props} title="Customers"/>
-                <div className="customersView_actionBarContainerStyle">
-                    <div className="customersView_actionBarItemStyle">
-                        <Button className="appButtonStyle">Add Customer</Button>
-                    </div>
-                    <div className="customersView_actionBarItemStyle">
-                        <Input type="text" name="searchBar" id="searchBar" placeholder="Search"/>
-                    </div>
-                </div>
-                <Table responsive>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Phone</th>
-                            <th>Description</th>
-                            <th>GST</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                    {this.state.filteredCustomers.map(this.rowElement.bind(this))}
-                    </tbody>
-              </Table>
-            </div>
+            this.checkAuthorization()
         );
     }
 }

@@ -114,34 +114,54 @@ class SupplierView extends React.Component{
         );
     }
 
+    checkAuthorization() {
+        let token = sessionStorage.getItem("token");
+        try {
+            var decoded = jwt.verify(token, 'secret key');
+            if(decoded.role === "ADMIN") {
+                return(
+                    <div>
+                        <HeaderComp {...this.props} title="Suppliers"/>
+                        <div className="supplierView_actionBarContainerStyle">
+                            <div className="supplierView_actionBarItemStyle">
+                                <Button className="appButtonStyle">Add Supplier</Button>
+                            </div>
+                            <div className="supplierView_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                            </div>
+                        </div>
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Description</th>
+                                    <th>GST</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="supplierView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="supplierView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="supplierView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="supplierView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.filteredSuppliers.map(this.rowElement.bind(this))}
+                            </tbody>
+                      </Table>
+                    </div>
+                );
+            }
+            else {
+                return(<Redirect to="/notAuthorised"/>);
+            }
+
+        }
+        catch(error) {
+            console.log(error);
+            return(<Redirect to="/notAuthorised"/>);
+        }
+    }
+
     render (){
         return (
-            <div>
-                <HeaderComp {...this.props} title="Suppliers"/>
-                <div className="supplierView_actionBarContainerStyle">
-                    <div className="supplierView_actionBarItemStyle">
-                        <Button className="appButtonStyle">Add Supplier</Button>
-                    </div>
-                    <div className="supplierView_actionBarItemStyle">
-                        <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                    </div>
-                </div>
-                <Table responsive>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Phone</th>
-                            <th>Description</th>
-                            <th>GST</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="supplierView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="supplierView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="supplierView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="supplierView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                    {this.state.filteredSuppliers.map(this.rowElement.bind(this))}
-                    </tbody>
-              </Table>
-            </div>
+            this.checkAuthorization()
         );
     }
 }
