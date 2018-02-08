@@ -8,6 +8,7 @@ import ActionTypes from '../constants/actionTypes';
 import EventTypes from '../constants/eventTypes';
 import Events from 'events';
 import request from 'request';
+import { getBase } from '../utils/secret';
 
 var EventEmitter = Events.EventEmitter;
 
@@ -29,16 +30,24 @@ Dispatcher.register(function(action) {
     switch(action.actionType) {
         case ActionTypes.GET_ORDERS: {
             // call service to check the login credentials and trigger event accordingly
-            request.get('https://wt-naveen-malhotra28-gmail-com-0.run.webtask.io/getOrders', function(error, response, body) {
-                let requestStatus = "ERROR";
-                let ordersData;
-                var result = JSON.parse(body);
-                if(result.code == undefined) {
-                    requestStatus = "SUCCESS";
-                    ordersData = result;
-                }
+            var options = {
+                url: getBase() + '/getOrders',
+                method: "POST",
+                form: {'token': action.data.token}
+            };
 
-                OrderStore.emitChange(EventTypes.GET_ORDERS_EVENT, {eventName: "GET_ORDERS", orders: ordersData, status: requestStatus});
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let ordersData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                        ordersData = result;
+                    }
+
+                    OrderStore.emitChange(EventTypes.GET_ORDERS_EVENT, {eventName: "GET_ORDERS", orders: ordersData, status: requestStatus});
+                }
             });
             break;
         }

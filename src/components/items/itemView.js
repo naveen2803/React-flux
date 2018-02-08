@@ -48,7 +48,7 @@ class ItemView extends React.Component{
         this.cb_onGetItemsResult = this.cb_onGetItemsResult.bind(this);
 
         // Action calls
-        ItemActions.getItems();
+        ItemActions.getItems(sessionStorage.getItem("token"));
     }
 
     /**
@@ -138,7 +138,7 @@ class ItemView extends React.Component{
                             </tr>
                         </thead>
                         <tbody>
-                        {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                        {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
                         {this.state.filteredItems.map(this.rowElement.bind(this))}
                         </tbody>
                   </Table>

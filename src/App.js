@@ -59,6 +59,7 @@ class App extends Component {
                         {...props}
                         username={this.state.username}
                         password={this.state.password}
+                        resetValues={this.resetValues}
                         onChange={this.onChange}/>} />
                     <Route exact path="/items" component={Items}/>
                     <Route exact path="/orders" component={Orders}/>

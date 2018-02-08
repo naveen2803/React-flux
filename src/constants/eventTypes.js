@@ -9,6 +9,9 @@ export default keyMirror({
 	LOGIN_EVENT: null,
 	LOGOUT_EVENT: null,
 
+	GET_USERS_EVENT: null,
+	ADD_USER_EVENT: null,
+
 	GET_ORDERS_EVENT: null,
 	ADD_ORDER_EVENT: null,
 

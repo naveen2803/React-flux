@@ -50,7 +50,7 @@ class SupplierView extends React.Component{
         this.cb_onGetSuppliersResult = this.cb_onGetSuppliersResult.bind(this);
 
         // Action calls
-        SupplierActions.getSuppliers();
+        SupplierActions.getSuppliers(sessionStorage.getItem("token"));
     }
 
     /**
@@ -141,7 +141,7 @@ class SupplierView extends React.Component{
                                 </tr>
                             </thead>
                             <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="supplierView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="supplierView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="supplierView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="supplierView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="supplierView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="supplierView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="supplierView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="supplierView_errorTextStyle">Error loading the data</span></div></td></tr>)}
                             {this.state.filteredSuppliers.map(this.rowElement.bind(this))}
                             </tbody>
                       </Table>

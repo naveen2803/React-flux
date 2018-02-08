@@ -7,11 +7,14 @@ import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 var CustomerActions = {
-    getCustomers: function() {
+    getCustomers: function(token) {
         console.log("I am going to fetch customers");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_CUSTOMERS,
-            data: ""
+            data: {
+                token: token
+            }
+
         });
     }
 };

@@ -15,6 +15,17 @@ var UserActions = {
                 token: token
             }
         });
+    },
+
+    addUsers: function(token, user) {
+        console.log("I am going to add a users");
+        Dispatcher.dispatch({
+            actionType: ActionTypes.ADD_USER,
+            data: {
+                token: token,
+                user: user
+            }
+        });
     }
 };
 

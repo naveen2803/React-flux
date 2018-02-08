@@ -1,5 +1,9 @@
 import jwt from 'jsonwebtoken';
 
+export function getBase() {
+    return "https://wt-naveen-malhotra28-gmail-com-0.run.webtask.io/myTask";
+}
+
 // secret key
 function generateKey() {
     return "NDY0YzQ0ZTUtZDY0ZS00MmE5LTg4OTctNDQ2OWJlYzI2ZGRm";
@@ -15,4 +19,4 @@ export function decodeToken(token) {
     return decoded;
 }
 
-export default { generateToken, decodeToken }
+export default { generateToken, decodeToken, getBase }

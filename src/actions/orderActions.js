@@ -7,11 +7,13 @@ import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 var OrderActions = {
-    getOrders: function() {
+    getOrders: function(token) {
         console.log("I am going to fetch orders");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_ORDERS,
-            data: ""
+            data: {
+                token: token
+            }
         });
     }
 };

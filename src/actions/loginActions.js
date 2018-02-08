@@ -22,11 +22,13 @@ var LoginActions = {
         });
     },
 
-    getOrders: function() {
+    getOrders: function(token) {
         console.log("I am going to fetch suppliers");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_ORDERS,
-            data: ""
+            data: {
+                token: token
+            }
         });
     }
 };

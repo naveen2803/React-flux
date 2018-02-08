@@ -10,20 +10,29 @@ import LoginStore from '../../stores/loginStore';
 import LoginActions from '../../actions/loginActions';
 import IconFlame from '../../assets/iconFlame';
 import { generateToken } from '../../utils/secret';
+import Loader from '../loader/loader';
 
 import { Button, Label, Input, FormGroup, Form } from 'reactstrap';
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
 
-let self;
 class LoginView extends React.Component{
     constructor(props) {
         super(props);
-        this.state = {};
+        let flameLogoSize = 80;
+        if(window.innerWidth < 500) {
+            flameLogoSize = 55;
+        }
+        this.state = {
+            flameLogoSise: flameLogoSize,
+            btnDisable: false,
+            loaderDisplayClassName: "loginView_loaderHide"
+        };
 
         this.loginClick = this.loginClick.bind(this);
-        self = this;
+        this.checkEnterPress = this.checkEnterPress.bind(this);
+        this.cb_onLoginResult = this.cb_onLoginResult.bind(this);
     }
 
     /**
@@ -42,22 +51,44 @@ class LoginView extends React.Component{
         LoginStore.removeChangeListener(EventTypes.LOGIN_EVENT, this.cb_onLoginResult);
     }
 
+    componentDidMount() {
+        this.props.resetValues();
+    }
+
     loginClick() {
         LoginActions.login({
             username: this.props.username,
             password: this.props.password
         });
+
+        this.setState({
+            btnDisable: true,
+            loaderDisplayClassName: "loginView_loaderShow"
+        });
     }
 
     cb_onLoginResult(event) {
+        this.setState({
+            btnDisable: false,
+            loaderDisplayClassName: "loginView_loaderHide"
+        });
+
         if(event.status === "SUCCESS") {
             console.log(event);
             var token = generateToken(event.user.username, event.user[0].role);
             sessionStorage.setItem("token", token);
-            self.props.history.push("/items");
+            this.props.history.push("/items");
         }
         else {
             toastr.error("Wrong username or password!", "Error");
+        }
+    }
+
+    checkEnterPress(event) {
+        if(event.currentTarget.name === "password") {
+            if(event.key === "Enter") {
+                this.loginClick();
+            }
         }
     }
 
@@ -69,7 +100,7 @@ class LoginView extends React.Component{
                         <div className="col-3 col-md-5"></div>
                         <div className="loginView_shadow">
                         	<div className="loginView_flameContent">
-                                <IconFlame />
+                                <IconFlame id="flame" width={this.state.flameLogoSise} height={this.state.flameLogoSise}/>
                         	</div>
                         </div>
                     </div>
@@ -85,13 +116,16 @@ class LoginView extends React.Component{
                                     <Label for="username" className="sectionHeadingStyle">Login</Label>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Input type="email" name="username" id="username" value={this.props.username} onChange={this.props.onChange} placeholder="Username" className="formItemVerticalStyle"/>
+                                    <Input type="email" name="username" id="username" value={this.props.username} onChange={this.props.onChange} onKeyPress={this.checkEnterPress} placeholder="Username" className="formItemVerticalStyle"/>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Input type="password" name="password" id="password" value={this.props.password} onChange={this.props.onChange} placeholder="Password" className="formItemVerticalStyle"/>
+                                    <Input type="password" ref={(input) => { this.passwordInput = input; }}  name="password" id="password" value={this.props.password} onChange={this.props.onChange} onKeyPress={this.checkEnterPress} placeholder="Password" className="formItemVerticalStyle"/>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Button color="success" className="col-12 formItemHorizontalStyle" onClick={this.loginClick}>Login</Button>
+                                    <Button color="success" className="col-12 formItemHorizontalStyle" onClick={this.loginClick} disabled={this.state.btnDisable}>
+                                        Login
+                                        <div className={this.state.loaderDisplayClassName}><Loader /></div>
+                                    </Button>
                                 </FormGroup>
                             </Form>
                         </div>

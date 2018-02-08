@@ -8,6 +8,7 @@ import ActionTypes from '../constants/actionTypes';
 import EventTypes from '../constants/eventTypes';
 import Events from 'events';
 import request from 'request';
+import { getBase } from '../utils/secret';
 
 var EventEmitter = Events.EventEmitter;
 
@@ -29,17 +30,26 @@ Dispatcher.register(function(action) {
     switch(action.actionType) {
         case ActionTypes.GET_CUSTOMERS: {
             // call service to check the login credentials and trigger event accordingly
-            request.get('https://wt-naveen-malhotra28-gmail-com-0.run.webtask.io/getCustomers', function(error, response, body) {
-                let requestStatus = "ERROR";
-                let customersData;
-                var result = JSON.parse(body);
-                if(result.code == undefined) {
-                    requestStatus = "SUCCESS";
-                    customersData = result;
-                }
+            var options = {
+                url: getBase() + '/getCustomers',
+                method: "POST",
+                form: {'token': action.data.token}
+            };
 
-                CustomerStore.emitChange(EventTypes.GET_CUSTOMERS_EVENT, {eventName: "GET_CUSTOMERS", customers: customersData, status: requestStatus});
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let customersData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                        customersData = result;
+                    }
+
+                    CustomerStore.emitChange(EventTypes.GET_CUSTOMERS_EVENT, {eventName: "GET_CUSTOMERS", customers: customersData, status: requestStatus});
+                }
             });
+
             break;
         }
 

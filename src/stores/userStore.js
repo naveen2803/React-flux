@@ -8,6 +8,7 @@ import ActionTypes from '../constants/actionTypes';
 import EventTypes from '../constants/eventTypes';
 import Events from 'events';
 import request from 'request';
+import { getBase } from '../utils/secret';
 
 var EventEmitter = Events.EventEmitter;
 
@@ -30,7 +31,7 @@ Dispatcher.register(function(action) {
         case ActionTypes.GET_USERS: {
             // call service to check the login credentials and trigger event accordingly
             var options = {
-                url: 'http://localhost:4000/getUsers',
+                url: getBase() + '/getUsers',
                 method: "POST",
                 form: {'token': action.data.token}
             };
@@ -45,6 +46,39 @@ Dispatcher.register(function(action) {
                         usersData = result;
                     }
                     UserStore.emitChange(EventTypes.GET_USERS_EVENT, {eventName: "GET_USERS", users: usersData, status: requestStatus});
+                }
+            })
+            break;
+        }
+
+        case ActionTypes.ADD_USER: {
+            // call service to check the login credentials and trigger event accordingly
+            var user = {
+                'token': action.data.token,
+                'firstname': action.data.user.firstname,
+                'lastname': action.data.user.lastname,
+                'phone': action.data.user.phone,
+                'address': action.data.user.address,
+                'email': action.data.user.email,
+                'username': action.data.user.username,
+                'role': action.data.user.role,
+                'password': 'Password@123'
+            };
+            var options = {
+                url: getBase() + '/addUser',
+                method: "POST",
+                form: user
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let usersData;
+                    var result = JSON.parse(body);
+                    if(result.affectedRows === 1) {
+                        requestStatus = "SUCCESS";
+                    }
+                    UserStore.emitChange(EventTypes.ADD_USER_EVENT, {eventName: "ADD_USER", user: user, status: requestStatus});
                 }
             })
             break;

@@ -48,7 +48,7 @@ class CustomerView extends React.Component{
         this.cb_onGetCustomersResult = this.cb_onGetCustomersResult.bind(this);
 
         // Action calls
-        CustomerActions.getCustomers();
+        CustomerActions.getCustomers(sessionStorage.getItem("token"));
     }
 
     /**
@@ -124,7 +124,7 @@ class CustomerView extends React.Component{
                                 </tr>
                             </thead>
                             <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="customersView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="customersView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="customersView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="customersView_errorTextStyle">Error loading the data</span></div></td></tr>)}
                             {this.state.filteredCustomers.map(this.rowElement.bind(this))}
                             </tbody>
                       </Table>

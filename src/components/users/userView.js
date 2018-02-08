@@ -14,7 +14,7 @@ import IconEdit from '../../assets/iconEdit';
 import IconDelete from '../../assets/iconDelete';
 
 import toastr from 'toastr';
-import 'toastr/build/toastr.css'
+import 'toastr/build/toastr.css';
 
 import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,
@@ -42,16 +42,18 @@ class UserView extends React.Component{
             showpopup: false,
             filteredUsers: [],
             orignalUsers: [],
-            loadingStatus:0
+            loadingStatus:0,
         };
 
         this.updateSearch = this.updateSearch.bind(this);
         //this.showCustomerForm = this.showCustomerForm.bind(this);
-        this.toggleModel = this.toggleModel.bind(this);
         this.cb_onGetUsersResult = this.cb_onGetUsersResult.bind(this);
-
+        this.cb_onAddUsersResult = this.cb_onAddUsersResult.bind(this);
+        
         this.editUser = this.editUser.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
+
+        this.showAddUserpopup = this.showAddUserpopup.bind(this);
 
         // Action calls
         UserActions.getUsers(sessionStorage.getItem("token"));
@@ -63,10 +65,12 @@ class UserView extends React.Component{
     */
     componentWillMount() {
         UserStore.addChangeListener(EventTypes.GET_USERS_EVENT, this.cb_onGetUsersResult);
+        UserStore.addChangeListener(EventTypes.ADD_USER_EVENT, this.cb_onAddUsersResult);
     }
 
     componentWillUnmount() {
         UserStore.removeChangeListener(EventTypes.GET_USERS_EVENT, this.cb_onGetUsersResult);
+        UserStore.removeChangeListener(EventTypes.ADD_USER_EVENT, this.cb_onAddUsersResult);
     }
 
     cb_onGetUsersResult(event) {
@@ -85,10 +89,13 @@ class UserView extends React.Component{
         }
     }
 
-    toggleModel() {
-        this.setState({
-            showpopup: !this.state.showpopup
-        });
+    cb_onAddUsersResult(event) {
+        if(event.status === "SUCCESS") {
+            console.log(event);
+        }
+        else {
+            toastr.error("Adding the user", "Error");
+        }
     }
 
     updateSearch(event) {
@@ -135,6 +142,12 @@ class UserView extends React.Component{
         });
     }
 
+    showAddUserpopup() {
+        this.setState({
+            showPopup: true
+        });
+    }
+
     checkAuthorization() {
         let token = sessionStorage.getItem("token");
         try {
@@ -143,9 +156,10 @@ class UserView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Users"/>
+                        <AddUserPopup showPopup={this.state.showPopup}/>
                         <div className="userView_actionBarContainerStyle">
                             <div className="userView_actionBarItemStyle">
-                                <Button className="appButtonStyle">Add User</Button>
+                                <Button onClick={this.showAddUserpopup} className="appButtonStyle">Add User</Button>
                             </div>
                             <div className="userView_actionBarItemStyle">
                                 <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
@@ -164,7 +178,7 @@ class UserView extends React.Component{
                                 </tr>
                             </thead>
                             <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="userView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="userView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?"":<tr><td colSpan="5" height="150px"><div className="userView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="userView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="userView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="userView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="userView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="userView_errorTextStyle">Error loading the data</span></div></td></tr>)}
                             {this.state.filteredUsers.map(this.rowElement.bind(this))}
                             </tbody>
                       </Table>

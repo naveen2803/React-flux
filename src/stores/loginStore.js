@@ -8,6 +8,7 @@ import ActionTypes from '../constants/actionTypes';
 import EventTypes from '../constants/eventTypes';
 import Events from 'events';
 import request from 'request';
+import { getBase } from '../utils/secret';
 
 var EventEmitter = Events.EventEmitter;
 
@@ -30,7 +31,7 @@ Dispatcher.register(function(action) {
         case ActionTypes.LOGIN: {
             // call service to check the login credentials and trigger event accordingly
             var options = {
-                url: 'http://localhost:4000/checkUser',
+                url: getBase() + '/checkUser',
                 method: "POST",
                 form: {'username': action.data.username, 'password': action.data.password}
             };
@@ -39,6 +40,7 @@ Dispatcher.register(function(action) {
                 let requestStatus = "ERROR";
                 if (!error && response.statusCode == 200) {
                     let userData;
+                    console.log(body);
                     var result = JSON.parse(body);
                     if(result.length > 0) {
                         requestStatus = "SUCCESS";

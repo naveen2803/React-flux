@@ -81,3 +81,15 @@ html, body {
 .handCursor {
     cursor: pointer;
 }
+
+.hideStyle {
+    display: none;
+}
+
+.floatRight {
+    float: right;
+}
+
+.floatLeft {
+    float: left;
+}

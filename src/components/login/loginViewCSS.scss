@@ -61,4 +61,45 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c8472', end
         margin-left: 20px;
         margin-right: 20px;
     }
+
+    .loginView_line {
+        height: 50px;
+        width: 2px;
+        margin-left: 80px;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7c8472+0,5e6b4e+43,5e6b4e+78,303a29+100 */
+    background: rgb(124,132,114); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(124,132,114,1) 0%, rgba(94,107,78,1) 43%, rgba(94,107,78,1) 78%, rgba(48,58,41,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(124,132,114,1) 0%,rgba(94,107,78,1) 43%,rgba(94,107,78,1) 78%,rgba(48,58,41,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(124,132,114,1) 0%,rgba(94,107,78,1) 43%,rgba(94,107,78,1) 78%,rgba(48,58,41,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c8472', endColorstr='#303a29',GradientType=0 ); /* IE6-9 */
+    }
+
+    .loginView_shadow {
+        height: 80px;
+        width: 80px;
+        border-radius: 40px;
+
+        margin-top: 20px;
+        margin-left: 40px;
+    }
+
+    .loginView_flameContent {
+        position: relative;
+        left: 15px;
+        top: 10px;
+    }
+}
+
+.loginView_loaderShow {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    display: block;
+}
+
+.loginView_loaderHide {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    display: none;
 }
