@@ -77,8 +77,34 @@ Dispatcher.register(function(action) {
                     var result = JSON.parse(body);
                     if(result.affectedRows === 1) {
                         requestStatus = "SUCCESS";
+                        user.user_id = result.insertId;
                     }
                     UserStore.emitChange(EventTypes.ADD_USER_EVENT, {eventName: "ADD_USER", user: user, status: requestStatus});
+                }
+            })
+            break;
+        }
+
+        case ActionTypes.DELETE_USER: {
+            // call service to check the login credentials and trigger event accordingly
+            var formData = {
+                'token': action.data.token,
+                'user_id': action.data.user_id
+            };
+            var options = {
+                url: getBase() + '/deleteUser',
+                method: "POST",
+                form: formData
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    var result = JSON.parse(body);
+                    if(result.affectedRows === 1) {
+                        requestStatus = "SUCCESS";
+                    }
+                    UserStore.emitChange(EventTypes.DELETE_USER_EVENT, {eventName: "DELETE_USER_EVENT", user_id: action.data.user_id, status: requestStatus});
                 }
             })
             break;

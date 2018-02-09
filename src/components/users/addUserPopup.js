@@ -40,10 +40,12 @@ class AddUserpopup extends React.Component{
             }
         };
 
-        this.toggleModel = this.toggleModel.bind(this);
+        this.showPopup = this.showPopup.bind(this);
+        this.hidePopup = this.hidePopup.bind(this);
         this.addUser = this.addUser.bind(this);
         this.cb_onAddUsersResult = this.cb_onAddUsersResult.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
+        this.clearUserState = this.clearUserState.bind(this);
     }
 
     /**
@@ -59,26 +61,47 @@ class AddUserpopup extends React.Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.showPopup !== undefined)
-            this.toggleModel();
+        if(nextProps.showPopup)
+            this.showPopup();
     }
 
-    toggleModel() {
+    showPopup() {
         this.setState({
-            showpopup: !this.state.showpopup
+            showpopup: true
+        });
+    }
+
+    hidePopup() {
+        this.setState({
+            showpopup: false
+        });
+
+        this.clearUserState();
+        this.props.togglePopup();
+    }
+
+    clearUserState() {
+        this.setState({
+            user: {
+                firstname: "",
+                lastname: "",
+                phone: "",
+                address: "",
+                email: "",
+                username: "",
+                role: "USER"
+            }
         });
     }
 
     addUser() {
         var userObject = {};
-        console.log(this.state.user);
-        UserActions.addUsers(sessionStorage.getItem("token"), this.state.user);
+        UserActions.addUser(sessionStorage.getItem("token"), this.state.user);
     }
 
     cb_onAddUsersResult(event) {
-        console.log(event);
         if(event.status === "SUCCESS") {
-            this.toggleModel();
+            this.hidePopup();
         }
         else {
             toastr.error("Adding the user", "Error");
@@ -99,8 +122,8 @@ class AddUserpopup extends React.Component{
     render (){
         return (
             <div>
-                <Modal isOpen={this.state.showpopup} toggle={this.toggleModel}>
-                    <ModalHeader toggle={this.toggleModel}>Add User</ModalHeader>
+                <Modal isOpen={this.state.showpopup} toggle={this.hidePopup}>
+                    <ModalHeader toggle={this.hidePopup}>Add User</ModalHeader>
                     <ModalBody>
                         <Form>
                             <FormGroup>
@@ -131,7 +154,7 @@ class AddUserpopup extends React.Component{
                     </ModalBody>
                     <ModalFooter>
                         <Button className="appButtonStyle" onClick={this.addUser}>Add</Button>
-                        <Button color="secondary" onClick={this.toggleModel}>Cancel</Button>
+                        <Button color="secondary" onClick={this.hidePopup}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
             </div>

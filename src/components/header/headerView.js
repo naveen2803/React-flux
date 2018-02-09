@@ -143,7 +143,7 @@ class HeaderComp extends React.Component{
             <div className="headerView_headerStyle">
                 <div>
                     <span className="companyTitleStyle">{this.props.title}</span>
-                        <Button id="Popover1" outline className="appOutlineButtonStyle accountOptionButtonStyle" onClick={this.toggle}>
+                    <Button id="Popover1" outline className="appOutlineButtonStyle accountOptionButtonStyle" onClick={this.toggle}>
                         <IconThreeBars />
                     </Button>
                     <Popover placement="bottom" isOpen={this.state.popoverOpen} target="Popover1" toggle={this.toggle}>

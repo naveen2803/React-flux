@@ -74,7 +74,6 @@ class LoginView extends React.Component{
         });
 
         if(event.status === "SUCCESS") {
-            console.log(event);
             var token = generateToken(event.user.username, event.user[0].role);
             sessionStorage.setItem("token", token);
             this.props.history.push("/items");

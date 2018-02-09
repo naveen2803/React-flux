@@ -17,13 +17,24 @@ var UserActions = {
         });
     },
 
-    addUsers: function(token, user) {
+    addUser: function(token, user) {
         console.log("I am going to add a users");
         Dispatcher.dispatch({
             actionType: ActionTypes.ADD_USER,
             data: {
                 token: token,
                 user: user
+            }
+        });
+    },
+
+    deleteUser: function(token, user_id) {
+        console.log("I am going to delete a users");
+        Dispatcher.dispatch({
+            actionType: ActionTypes.DELETE_USER,
+            data: {
+                token: token,
+                user_id: user_id
             }
         });
     }

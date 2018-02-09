@@ -11,6 +11,7 @@ export default keyMirror({
 
 	GET_USERS_EVENT: null,
 	ADD_USER_EVENT: null,
+	DELETE_USER_EVENT: null,
 
 	GET_ORDERS_EVENT: null,
 	ADD_ORDER_EVENT: null,
