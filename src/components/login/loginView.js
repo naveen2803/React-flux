@@ -56,15 +56,20 @@ class LoginView extends React.Component{
     }
 
     loginClick() {
-        LoginActions.login({
-            username: this.props.username,
-            password: this.props.password
-        });
+        if(this.props.username.trim() === "" || this.props.password.trim() === "") {
+            toastr.error("Wrong username or password!", "Error");
+        }
+        else {
+            LoginActions.login({
+                username: this.props.username,
+                password: this.props.password
+            });
 
-        this.setState({
-            btnDisable: true,
-            loaderDisplayClassName: "loginView_loaderShow"
-        });
+            this.setState({
+                btnDisable: true,
+                loaderDisplayClassName: "loginView_loaderShow"
+            });
+        }
     }
 
     cb_onLoginResult(event) {

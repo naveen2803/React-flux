@@ -151,6 +151,7 @@ class UserView extends React.Component{
                 ||  user.email.toUpperCase().indexOf(value.toUpperCase()) >= 0
                 ||  user.username.toUpperCase().indexOf(value.toUpperCase()) >= 0
                 ||  user.password.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  user.role.toUpperCase().indexOf(value.toUpperCase()) >= 0
                 ||  user.phone.toUpperCase().indexOf(value.toUpperCase()) >= 0)
                     return true;
                 else return false;
@@ -167,6 +168,7 @@ class UserView extends React.Component{
                 <td>{item.email}</td>
                 <td>{item.username}</td>
                 <td>{item.password}</td>
+                <td>{item.role}</td>
                 <td><span className="padding10 handCursor" data-userid={item.user_id} onClick={this.editUser}><IconEdit width="18" height="18"/></span><span data-userid={item.user_id} className="padding10 handCursor" onClick={this.deleteUser}><IconDelete width="18" height="18"/></span></td>
             </tr>
         );
@@ -233,6 +235,7 @@ class UserView extends React.Component{
                                     <th>Email</th>
                                     <th>Username</th>
                                     <th>Password</th>
+                                    <th>Role</th>
                                     <th></th>
                                 </tr>
                             </thead>

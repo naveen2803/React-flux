@@ -97,3 +97,14 @@ html, body {
 .floatLeft {
     float: left;
 }
+
+.noDataAvailableStyle {
+    padding-left: 20px;
+    line-height: 30px;
+    font-size: 30px;
+    color: #ABABAB;
+}
+
+.positionAbsolute {
+    position: absolute;
+}
