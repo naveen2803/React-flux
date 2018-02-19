@@ -37,7 +37,7 @@ class HeaderComp extends React.Component{
         this.state = {
             popoverOpen: false,
             modal: false,
-            menuItems: ["Items"]
+            menuItems: ["Items", "Add Order"]
         };
 
         this.toggle = this.toggle.bind(this);
@@ -59,7 +59,7 @@ class HeaderComp extends React.Component{
             if(decoded.role === "ADMIN")
             {
                 this.setState({
-                    menuItems: ['Items', 'Users', 'Orders', 'Suppliers', 'Customers']
+                    menuItems: ['Items', 'Users', 'Customer Orders', 'Supplier Orders', 'Add Order', 'Suppliers', 'Customers']
                 });
             }
 
@@ -115,14 +115,24 @@ class HeaderComp extends React.Component{
                     <div key={index}><IconAddUser width="20" height="20"/> <Button color="link" name="users" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
                 );
             }
-            case "Orders": {
+            case "Customer Orders": {
                 return (
-                    <div key={index}><IconOrders width="20" height="20"/> <Button color="link" name="orders" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
+                    <div key={index}><IconOrders width="20" height="20"/> <Button color="link" name="customerOrders" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
+                );
+            }
+            case "Supplier Orders": {
+                return (
+                    <div key={index}><IconOrders width="20" height="20"/> <Button color="link" name="supplierOrders" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
                 );
             }
             case "Items": {
                 return (
                     <div key={index}><IconItems width="20" height="20"/> <Button color="link" name="items" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
+                );
+            }
+            case "Add Order": {
+                return (
+                    <div key={index}><IconItems width="20" height="20"/> <Button color="link" name="addOrder" onClick={this.changeLink} className="logoutTextStyle">{menuItem}</Button></div>
                 );
             }
             case "Suppliers": {

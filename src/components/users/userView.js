@@ -216,7 +216,7 @@ class UserView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Users" visibleStyle={this.state.serverBusy}/>
-                        <AddUserPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp}/>
+                        <AddUserPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} existingUsers={this.state.orignalUsers}/>
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="userView_actionBarContainerStyle">
                             <div className="userView_actionBarItemStyle">

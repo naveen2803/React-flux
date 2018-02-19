@@ -30,7 +30,7 @@ import AddOrderPopup from './addOrderPopup';
 import { Table } from 'reactstrap';
 import './ordersCSS.css';
 
-class Orders extends React.Component{
+class CustomerOrders extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -96,7 +96,7 @@ class Orders extends React.Component{
             if(decoded.role === "ADMIN") {
                 return(
                     <div>
-                        <HeaderComp {...this.props} title="Orders"/>
+                        <HeaderComp {...this.props} title="Customer Orders"/>
                         <AddOrderPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} suppliers={this.state.suppliers}/>
                         <div className="orders_actionBarContainerStyle">
                             <div className="orders_actionBarItemStyle">
@@ -109,13 +109,14 @@ class Orders extends React.Component{
                         <Table responsive>
                             <thead>
                                 <tr>
-                                    <th>Buyer Order Number</th>
+                                    <th>Customer Order Number</th>
                                     <th>Order Date</th>
                                     <th>Item ID</th>
                                     <th>Cost</th>
                                     <th>Qty</th>
-                                    <th>Supplier ID</th>
+                                    <th>Supplier Name</th>
                                     <th>Supplier Order Number</th>
+                                    <th>Order Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -192,4 +193,4 @@ class Orders extends React.Component{
     }
 }
 
-export default Orders;
+export default CustomerOrders;

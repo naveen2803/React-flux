@@ -1,51 +1,57 @@
 /**
  * Created By: Naveen Malhotra
- * Created Date: (dd/mm/yyyy)
+ * Created Date: 19/02/2018(dd/mm/yyyy)
 */
 
 import React from 'react';
-
 import EventTypes from '../../constants/eventTypes';
 import ItemStore from '../../stores/itemStore';
 import ItemActions from '../../actions/itemActions';
+import OrderStore from '../../stores/orderStore';
+import OrderActions from '../../actions/orderActions';
+import SupplierStore from '../../stores/supplierStore';
+import SupplierActions from '../../actions/supplierActions';
 import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
-import { decodeToken } from '../../utils/secret';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
+import _ from 'lodash';
+
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
+
+import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
             Row, Col,
-            Button, Input,
+            Button, Input, Label,
             FormGroup, Form } from 'reactstrap';
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
-import AddItemPopup from './addItemPopup';
+import AddOrderPopup from './addOrderPopup';
 import { Table } from 'reactstrap';
-import './itemViewCSS.css';
+import './ordersCSS.css';
 
-class ItemView extends React.Component{
+class AddOrder extends React.Component{
     constructor(props) {
         super(props);
-        /**
-        *   loadingStatus:0 (loading)
-        *   loadingStatus:1 (got result)
-        *   loadingStatus:2 (error)
-        **/
+
         this.state = {
-            showpopup: false,
+            selectedItems: [],
+            selectedDate: moment(),
             filteredItems: [],
             orignalItems: [],
             loadingStatus:0
         };
 
-
+        this.handleDateChange = this.handleDateChange.bind(this);
         this.updateSearch = this.updateSearch.bind(this);
-        this.toggleModel = this.toggleModel.bind(this);
         this.cb_onGetItemsResult = this.cb_onGetItemsResult.bind(this);
-
+        this.onItemSelect = this.onItemSelect.bind(this);
+        
         // Action calls
         ItemActions.getItems(sessionStorage.getItem("token"));
     }
@@ -61,7 +67,7 @@ class ItemView extends React.Component{
     componentWillUnmount() {
         ItemStore.removeChangeListener(EventTypes.GET_ITEMS_EVENT, this.cb_onGetItemsResult);
     }
-
+    
     cb_onGetItemsResult(event) {
         if(event.status === "SUCCESS") {
             this.setState({
@@ -77,13 +83,25 @@ class ItemView extends React.Component{
             });
         }
     }
-
-    toggleModel() {
-        this.setState({
-            showpopup: !this.state.showpopup
-        });
+    
+    onItemSelect(id) {
+        var items = this.state.selectedItems;
+        if(id.target.checked) {
+            items.push(id.target.name)
+            this.setState({selectedItems: items});
+        }
+        else {
+            _.pull(items, id.target.name);
+            this.setState({selectedItems: items});
+        }
     }
 
+    handleDateChange(event) {
+        this.setState({
+            selectedDate: event
+        });
+    }
+    
     updateSearch(event) {
         let value = event.target.value;
         this.setState({
@@ -98,15 +116,15 @@ class ItemView extends React.Component{
             })
         });
     }
-
+    
     rowElement(item, index) {
         return(
             <tr key={index}>
-                <td>{item.s_name}</td>
-                <td>{item.s_address}</td>
-                <td>{item.s_phone}</td>
+                <td><input name={item.item_id} checked={this.state.selectedItems.includes(item.item_id)?true:false} onChange={this.onItemSelect} type="checkbox" /></td>
+                <td>{item.item_code}</td>
+                <td>{item.base}</td>
+                <td>{item.price}</td>
                 <td>{item.description}</td>
-                <td>{item.s_gst}</td>
             </tr>
         );
     }
@@ -117,23 +135,39 @@ class ItemView extends React.Component{
             var decoded = decodeToken(token);
             return(
                 <div>
-                    <HeaderComp {...this.props} title="Items"/>
+                    <HeaderComp {...this.props} title="Add Order"/>
+                
                     <div className="itemView_actionBarContainerStyle">
                         <div className="itemView_actionBarItemStyle">
-                            <Button className="appButtonStyle">Add Item</Button>
+                            <Input type="text" name="customerName" id="customerName" placeholder="Customer Name" />
                         </div>
                         <div className="itemView_actionBarItemStyle">
+                            <Input type="text" name="orderNumber" id="orderNumber" placeholder="Order Number" />
+                        </div>
+                        <div className="itemView_actionBarItemStyle">
+                            <DatePicker className="form-control"
+                                selected={this.state.selectedDate}
+                                onChange={this.handleDateChange}
+                                dateFormat="DD-MMM-YYYY"
+                            />
+                        </div>
+                    </div>
+                    <div className="itemView_actionBarContainerStyle">
+                        <div className="itemView_actionBarItemStyle">
                             <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                        </div>
+                        <div className="itemView_actionBarItemStyle">
+                            <Button color="success">Save Order</Button>
                         </div>
                     </div>
                     <Table responsive>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Address</th>
-                                <th>Phone</th>
+                                <th></th>
+                                <th>Item Code</th>
+                                <th>Base</th>
+                                <th>Price</th>
                                 <th>Description</th>
-                                <th>GST</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,7 +175,7 @@ class ItemView extends React.Component{
                         {this.state.filteredItems.map(this.rowElement.bind(this))}
                         </tbody>
                   </Table>
-                </div>
+                 </div> 
             );
 
         }
@@ -150,7 +184,7 @@ class ItemView extends React.Component{
             return(<Redirect to="/notAuthorised"/>);
         }
     }
-
+    
     render (){
         return (
             this.checkAuthorization()
@@ -158,8 +192,12 @@ class ItemView extends React.Component{
     }
 }
 
-ItemView.defaultProps = {
+AddOrder.propTypes = {
 
 }
 
-export default ItemView;
+AddOrder.defaultProps = {
+
+}
+
+export default AddOrder;

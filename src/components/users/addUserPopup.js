@@ -96,7 +96,24 @@ class AddUserpopup extends React.Component{
 
     addUser() {
         var userObject = {};
-        UserActions.addUser(sessionStorage.getItem("token"), this.state.user);
+        var username = this.state.user.username.trim();
+        var sameUsername = this.props.existingUsers.find(function(user) {            
+            return user.username === username;
+        });
+        
+        if( this.state.user.firstname.trim() === ""
+        ||  this.state.user.phone.trim() === ""
+        ||  this.state.user.username.trim() === "")
+        {
+            toastr.error("Firstname, phone and username are mandatory fields", "Error");
+        }
+        else if(sameUsername != undefined) {
+            toastr.error("Username exists", "Error");
+        }
+        else {
+            UserActions.addUser(sessionStorage.getItem("token"), this.state.user);
+        }
+        
     }
 
     cb_onAddUsersResult(event) {

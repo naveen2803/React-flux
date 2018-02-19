@@ -3,14 +3,15 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import './App.css';
 import LoginView from './components/login/loginView';
-import Orders from './components/orders/orders';
+import CustomerOrders from './components/orders/customerOrders';
+import SupplierOrders from './components/orders/supplierOrders';
 import Customers from './components/customers/customerView';
 import Suppliers from './components/suppliers/supplierView';
 import Users from './components/users/userView';
 import Items from './components/items/itemView';
 import UnAuthorised from './components/unAuthorised/unAuthorisedView';
 import PageNotFound from './components/pageNotFound/pageNotFound';
-
+import AddOrder from './components/orders/addOrder';
 class App extends Component {
 
     constructor(props) {
@@ -62,7 +63,9 @@ class App extends Component {
                         resetValues={this.resetValues}
                         onChange={this.onChange}/>} />
                     <Route exact path="/items" component={Items}/>
-                    <Route exact path="/orders" component={Orders}/>
+                    <Route exact path="/supplierOrders" component={SupplierOrders}/>
+                    <Route exact path="/customerOrders" component={CustomerOrders}/>
+                    <Route exact path="/addOrder" component={AddOrder}/>
                     <Route exact path="/customers" component={Customers}/>
                     <Route exact path="/suppliers" component={Suppliers}/>
                     <Route exact path="/users" component={Users}/>
