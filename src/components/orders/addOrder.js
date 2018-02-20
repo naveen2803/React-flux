@@ -3,6 +3,14 @@
  * Created Date: 19/02/2018(dd/mm/yyyy)
 */
 
+// <div className="itemView_actionBarItemStyle">
+//     <DatePicker className="form-control"
+//         selected={this.state.selectedDate}
+//         onChange={this.handleDateChange}
+//         dateFormat="DD-MMM-YYYY"
+//     />
+// </div>
+
 import React from 'react';
 import EventTypes from '../../constants/eventTypes';
 import ItemStore from '../../stores/itemStore';
@@ -51,6 +59,7 @@ class AddOrder extends React.Component{
         this.updateSearch = this.updateSearch.bind(this);
         this.cb_onGetItemsResult = this.cb_onGetItemsResult.bind(this);
         this.onItemSelect = this.onItemSelect.bind(this);
+        this.addOrder = this.addOrder.bind(this);
         
         // Action calls
         ItemActions.getItems(sessionStorage.getItem("token"));
@@ -102,6 +111,11 @@ class AddOrder extends React.Component{
         });
     }
     
+    addOrder(event) {
+        if(this.state.selectedItems.length == 0)
+            toastr.warning("Please select item(s)", "Warning");
+    }
+    
     updateSearch(event) {
         let value = event.target.value;
         this.setState({
@@ -118,8 +132,8 @@ class AddOrder extends React.Component{
     
     rowElement(item, index) {
         return(
-            <tr key={index}>
-                <td><input name={item.item_id} onChange={this.onItemSelect} checked={this.state.selectedItems.includes(item.item_id.toString())?true:false} type="checkbox" /></td>
+            <tr key={index} bgcolor={this.state.selectedItems.includes(item.item_id.toString())?"#f7f7f7":"transparent"}>
+                <td align="center"><input name={item.item_id} onChange={this.onItemSelect} checked={this.state.selectedItems.includes(item.item_id.toString())?true:false} type="checkbox" /></td>
                 <td>{item.item_code}</td>
                 <td>{item.base}</td>
                 <td>{item.price}</td>
@@ -137,32 +151,20 @@ class AddOrder extends React.Component{
                     <HeaderComp {...this.props} title="Add Order"/>
                 
                     <div className="itemView_actionBarContainerStyle">
-                        <div className="itemView_actionBarItemStyle">
-                            <Input type="text" name="customerName" id="customerName" placeholder="Customer Name" />
-                        </div>
-                        <div className="itemView_actionBarItemStyle">
-                            <Input type="text" name="orderNumber" id="orderNumber" placeholder="Order Number" />
-                        </div>
-                        <div className="itemView_actionBarItemStyle">
-                            <DatePicker className="form-control"
-                                selected={this.state.selectedDate}
-                                onChange={this.handleDateChange}
-                                dateFormat="DD-MMM-YYYY"
-                            />
+                        <div className="itemView_actionBarContainerStyle">
+                            <div className="itemView_actionBarItemStyle">
+                                <Button className="appButtonStyle" onClick={this.addOrder}>Add Order</Button>
+                            </div>
+                            <div className="itemView_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                            </div>
                         </div>
                     </div>
-                    <div className="itemView_actionBarContainerStyle">
-                        <div className="itemView_actionBarItemStyle">
-                            <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                        </div>
-                        <div className="itemView_actionBarItemStyle">
-                            <Button color="success">Save Order</Button>
-                        </div>
-                    </div>
+                    
                     <Table responsive>
                         <thead>
                             <tr>
-                                <th></th>
+                                <th width="20px"></th>
                                 <th>Item Code</th>
                                 <th>Base</th>
                                 <th>Price</th>
