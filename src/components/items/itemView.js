@@ -45,6 +45,7 @@ class ItemView extends React.Component{
         this.updateSearch = this.updateSearch.bind(this);
         this.toggleModel = this.toggleModel.bind(this);
         this.cb_onGetItemsResult = this.cb_onGetItemsResult.bind(this);
+        this.cb_onAddItemResult = this.cb_onAddItemResult.bind(this);
 
         // Action calls
         ItemActions.getItems(sessionStorage.getItem("token"));
@@ -56,12 +57,30 @@ class ItemView extends React.Component{
     */
     componentWillMount() {
         ItemStore.addChangeListener(EventTypes.GET_ITEMS_EVENT, this.cb_onGetItemsResult);
+        ItemStore.addChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
     }
 
     componentWillUnmount() {
         ItemStore.removeChangeListener(EventTypes.GET_ITEMS_EVENT, this.cb_onGetItemsResult);
+        ItemStore.removeChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
     }
 
+    cb_onAddItemResult(event) {
+        if(event.status === "SUCCESS") {
+            // this.setState({
+            //     filteredItems: event.items,
+            //     orignalItems: event.items,
+            //     loadingStatus: 1
+            // });
+        }
+        else {
+            toastr.error("Adding the item", "Error");
+            // this.setState({
+            //     loadingStatus: 2
+            // });
+        }
+    }
+    
     cb_onGetItemsResult(event) {
         if(event.status === "SUCCESS") {
             this.setState({
@@ -88,11 +107,10 @@ class ItemView extends React.Component{
         let value = event.target.value;
         this.setState({
             filteredItems: this.state.orignalItems.filter(item => {
-                if( item.s_name.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_address.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_phone.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.description.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_gst.toUpperCase().indexOf(value.toUpperCase()) >= 0)
+                if( item.item_code.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.base.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.price.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.description.toUpperCase().indexOf(value.toUpperCase()) >= 0)
                     return true;
                 else return false;
             })
@@ -102,11 +120,10 @@ class ItemView extends React.Component{
     rowElement(item, index) {
         return(
             <tr key={index}>
-                <td>{item.s_name}</td>
-                <td>{item.s_address}</td>
-                <td>{item.s_phone}</td>
+                <td>{item.item_code}</td>
+                <td>{item.base}</td>
+                <td>{item.price}</td>
                 <td>{item.description}</td>
-                <td>{item.s_gst}</td>
             </tr>
         );
     }
@@ -118,9 +135,10 @@ class ItemView extends React.Component{
             return(
                 <div>
                     <HeaderComp {...this.props} title="Items"/>
+                    <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel}/>
                     <div className="itemView_actionBarContainerStyle">
                         <div className="itemView_actionBarItemStyle">
-                            <Button className="appButtonStyle">Add Item</Button>
+                            <Button className="appButtonStyle" onClick={this.toggleModel}>Add Item</Button>
                         </div>
                         <div className="itemView_actionBarItemStyle">
                             <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
@@ -129,11 +147,10 @@ class ItemView extends React.Component{
                     <Table responsive>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Address</th>
-                                <th>Phone</th>
+                                <th>Item Code</th>
+                                <th>Base</th>
+                                <th>Price</th>
                                 <th>Description</th>
-                                <th>GST</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,7 +160,6 @@ class ItemView extends React.Component{
                   </Table>
                 </div>
             );
-
         }
         catch(error) {
             console.log(error);

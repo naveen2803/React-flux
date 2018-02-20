@@ -8,11 +8,20 @@ import ActionTypes from '../constants/actionTypes';
 
 var ItemActions = {
     getItems: function(token) {
-        console.log("I am going to fetch items");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_ITEMS,
             data: {
                 token: token
+            }
+        });
+    },
+
+    addItem: function(token, item) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.ADD_ITEM,
+            data: {
+                token: token,
+                item: item
             }
         });
     }

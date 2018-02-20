@@ -9,6 +9,10 @@ export default keyMirror({
 	LOGIN: null,
 	LOGOUT: null,
 
+	GET_ITEMS:null,
+	ADD_ITEM: null,
+	DELETE_ITEM: null,
+
 	GET_ORDERS: null,
 	ADD_ORDER: null,
 

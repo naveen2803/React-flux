@@ -84,14 +84,14 @@ class AddOrder extends React.Component{
         }
     }
     
-    onItemSelect(id) {
+    onItemSelect(event) {
         var items = this.state.selectedItems;
-        if(id.target.checked) {
-            items.push(id.target.name)
+        if(event.target.checked) {
+            items.push(event.target.name)
             this.setState({selectedItems: items});
         }
         else {
-            _.pull(items, id.target.name);
+            _.pull(items, event.target.name);
             this.setState({selectedItems: items});
         }
     }
@@ -106,11 +106,10 @@ class AddOrder extends React.Component{
         let value = event.target.value;
         this.setState({
             filteredItems: this.state.orignalItems.filter(item => {
-                if( item.s_name.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_address.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_phone.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.description.toUpperCase().indexOf(value.toUpperCase()) >= 0
-                ||  item.s_gst.toUpperCase().indexOf(value.toUpperCase()) >= 0)
+                if( item.item_code.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.base.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.price.toUpperCase().indexOf(value.toUpperCase()) >= 0
+                ||  item.description.toUpperCase().indexOf(value.toUpperCase()) >= 0)
                     return true;
                 else return false;
             })
@@ -120,7 +119,7 @@ class AddOrder extends React.Component{
     rowElement(item, index) {
         return(
             <tr key={index}>
-                <td><input name={item.item_id} checked={this.state.selectedItems.includes(item.item_id)?true:false} onChange={this.onItemSelect} type="checkbox" /></td>
+                <td><input name={item.item_id} onChange={this.onItemSelect} checked={this.state.selectedItems.includes(item.item_id.toString())?true:false} type="checkbox" /></td>
                 <td>{item.item_code}</td>
                 <td>{item.base}</td>
                 <td>{item.price}</td>
