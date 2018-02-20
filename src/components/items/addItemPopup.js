@@ -16,6 +16,9 @@ import {    Button,
 import EventTypes from '../../constants/eventTypes';
 import ItemStore from '../../stores/itemStore';
 import ItemActions from '../../actions/itemActions';
+import _ from 'lodash';
+import toastr from 'toastr';
+import 'toastr/build/toastr.css'
 
 class AddItemPopup extends React.Component{
     constructor(props) {
@@ -36,15 +39,40 @@ class AddItemPopup extends React.Component{
     }
 
     addItem() {
-        console.log(this.state.item);
-        ItemActions.addItem(sessionStorage.getItem("token"), this.state.item);
-        this.clearUserState();
+        if( this.validateItemData() ) {
+            ItemActions.addItem(sessionStorage.getItem("token"), this.state.item);
+            this.clearUserState();
+        }
+        else {
+            
+        }
+        
+        
+    }
+    
+    validateItemData() {
+        let newItemCode = this.state.item.item_code;
+        let price = this.state.item.price;
+        let index = _.findIndex(this.props.items, function(item) { return item.item_code === newItemCode; });
+        if(index == -1) {
+            if(isNaN(parseFloat(price))) {
+                toastr.warning("Please enter valid price", "Warning");
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            toastr.warning("Item code already exists.", "Warning");
+            return false;
+        }
     }
 
     onTextChange(event) {
-        var field = event.target.name;
-		var value = event.target.value;
-        var updatedProperty = {};
+        let field = event.target.name;
+		let value = event.target.value;
+        let updatedProperty = {};
         updatedProperty[field] = value;
         var updatedUser = Object.assign(this.state.item, updatedProperty);
         this.setState({
@@ -93,6 +121,5 @@ class AddItemPopup extends React.Component{
         );
     }
 }
-
 
 export default AddItemPopup;

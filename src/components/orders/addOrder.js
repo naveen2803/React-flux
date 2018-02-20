@@ -27,7 +27,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import toastr from 'toastr';
-import 'toastr/build/toastr.css'
+import 'toastr/build/toastr.css';
 
 import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,

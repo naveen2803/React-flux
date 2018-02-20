@@ -132,34 +132,63 @@ class ItemView extends React.Component{
         let token = sessionStorage.getItem("token");
         try {
             var decoded = decodeToken(token);
-            return(
-                <div>
-                    <HeaderComp {...this.props} title="Items"/>
-                    <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel}/>
-                    <div className="itemView_actionBarContainerStyle">
-                        <div className="itemView_actionBarItemStyle">
-                            <Button className="appButtonStyle" onClick={this.toggleModel}>Add Item</Button>
+            if(decoded.role === 'ADMIN') {
+                return(
+                    <div>
+                        <HeaderComp {...this.props} title="Items"/>
+                        <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} items={this.state.orignalItems}/>
+                        <div className="itemView_actionBarContainerStyle">
+                            <div className="itemView_actionBarItemStyle">
+                                <Button className="appButtonStyle" onClick={this.toggleModel}>Add Item</Button>
+                            </div>
+                            <div className="itemView_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                            </div>
                         </div>
-                        <div className="itemView_actionBarItemStyle">
-                            <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                        </div>
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>Item Code</th>
+                                    <th>Base</th>
+                                    <th>Price</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.filteredItems.map(this.rowElement.bind(this))}
+                            </tbody>
+                      </Table>
                     </div>
-                    <Table responsive>
-                        <thead>
-                            <tr>
-                                <th>Item Code</th>
-                                <th>Base</th>
-                                <th>Price</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                        {this.state.filteredItems.map(this.rowElement.bind(this))}
-                        </tbody>
-                  </Table>
-                </div>
-            );
+                );
+            }
+            else {
+                return(
+                    <div>
+                        <HeaderComp {...this.props} title="Items"/>
+                        <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} items={this.state.orignalItems}/>
+                        <div className="itemView_actionBarContainerStyle">
+                            <div className="itemView_actionBarItemStyle">
+                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                            </div>
+                        </div>
+                        <Table responsive>
+                            <thead>
+                                <tr>
+                                    <th>Item Code</th>
+                                    <th>Base</th>
+                                    <th>Price</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                            {this.state.filteredItems.map(this.rowElement.bind(this))}
+                            </tbody>
+                      </Table>
+                    </div>
+                );
+            }
         }
         catch(error) {
             console.log(error);
