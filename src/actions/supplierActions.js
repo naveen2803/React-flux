@@ -8,11 +8,30 @@ import ActionTypes from '../constants/actionTypes';
 
 var SupplierActions = {
     getSuppliers: function(token) {
-        console.log("I am going to fetch suppliers");
         Dispatcher.dispatch({
             actionType: ActionTypes.GET_SUPPLIERS,
             data: {
                 token: token
+            }
+        });
+    },
+
+    addSupplier: function(token, supplier) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.ADD_SUPPLIER,
+            data: {
+                token: token,
+                supplier: supplier
+            }
+        });
+    },
+
+    deleteSupplier: function(token, s_id) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.DELETE_SUPPLIER,
+            data: {
+                token: token,
+                s_id: s_id
             }
         });
     }

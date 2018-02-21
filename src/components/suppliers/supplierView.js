@@ -5,14 +5,18 @@
 
 import React from 'react';
 
+import ActionTypes from '../../constants/actionTypes';
 import EventTypes from '../../constants/eventTypes';
 import SupplierStore from '../../stores/supplierStore';
 import SupplierActions from '../../actions/supplierActions';
 import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
+import IconEdit from '../../assets/iconEdit';
+import IconDelete from '../../assets/iconDelete';
+import ConfirmDialog from '../confirmDialog/confirmDialog';
 
 import toastr from 'toastr';
-import 'toastr/build/toastr.css'
+import 'toastr/build/toastr.css';
 
 import { decodeToken } from '../../utils/secret';
 import {    TabContent, TabPane,
@@ -40,14 +44,27 @@ class SupplierView extends React.Component{
             showpopup: false,
             filteredSuppliers: [],
             orignalSuppliers: [],
-            loadingStatus:0
+            loadingStatus:0,
+            confirmDialogOptions: {
+                showConfirmDialog: false,
+                heading: "Delete Supplier",
+                actionBtnLabel: "Delete",
+                actionType: ActionTypes.DELETE_SUPPLIER,
+                s_id: "",
+                bodyMessage: "Are you sure you want to delete the supplier?"
+            }
         };
 
 
         this.updateSearch = this.updateSearch.bind(this);
-        //this.showCustomerForm = this.showCustomerForm.bind(this);
-        this.toggleModel = this.toggleModel.bind(this);
         this.cb_onGetSuppliersResult = this.cb_onGetSuppliersResult.bind(this);
+        this.cb_onAddSupplierResult = this.cb_onAddSupplierResult.bind(this);
+        this.togglePopupProp = this.togglePopupProp.bind(this);
+        this.showAddUserpopup = this.showAddUserpopup.bind(this);
+        this.editSupplier = this.editSupplier.bind(this);
+        this.deleteSupplier = this.deleteSupplier.bind(this);
+        this.toggleConfirmPopupProp = this.toggleConfirmPopupProp.bind(this);
+        this.cb_onSupplierDeleteResult = this.cb_onSupplierDeleteResult.bind(this);
 
         // Action calls
         SupplierActions.getSuppliers(sessionStorage.getItem("token"));
@@ -59,12 +76,31 @@ class SupplierView extends React.Component{
     */
     componentWillMount() {
         SupplierStore.addChangeListener(EventTypes.GET_SUPPLIERS_EVENT, this.cb_onGetSuppliersResult);
+        SupplierStore.addChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
+        SupplierStore.addChangeListener(EventTypes.DELETE_SUPPLIER_EVENT, this.cb_onSupplierDeleteResult);
     }
 
     componentWillUnmount() {
         SupplierStore.removeChangeListener(EventTypes.GET_SUPPLIERS_EVENT, this.cb_onGetSuppliersResult);
+        SupplierStore.removeChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
+        SupplierStore.removeChangeListener(EventTypes.DELETE_SUPPLIER_EVENT, this.cb_onSupplierDeleteResult);
     }
+    
+    cb_onAddSupplierResult(event) {
+        if(event.status === "SUCCESS") {
+            this.setState({
+                orignalSuppliers: [...this.state.orignalSuppliers, event.supplier],
+                filteredSuppliers: [...this.state.orignalSuppliers, event.supplier],
+                showpopup: false
+            });
 
+            toastr.success("Supplier Added", "Success");
+        }
+        else {
+            toastr.error("Adding the supplier", "Error");
+        }
+    }
+    
     cb_onGetSuppliersResult(event) {
         if(event.status === "SUCCESS") {
             this.setState({
@@ -80,10 +116,55 @@ class SupplierView extends React.Component{
             });
         }
     }
+    
+    cb_onSupplierDeleteResult(event) {
+        if(event.status === "SUCCESS") {
+            var arr = this.state.orignalSuppliers.filter(user => user.s_id != event.s_id);
+            this.setState({
+                filteredSuppliers : arr,
+                orignalSuppliers : arr,
+                confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                    showConfirmDialog: false
+                })
+            });
 
-    toggleModel() {
+            toastr.success("Supplier deleted", "Success");
+        }
+        else {
+            toastr.error("Deleting the Supplier", "Error");
+        }
+    }
+    
+    showAddUserpopup() {
         this.setState({
-            showpopup: !this.state.showpopup
+            showPopup: true
+        });
+    }
+    
+    togglePopupProp() {
+        this.setState({
+            showPopup: false
+        });
+    }
+    
+    toggleConfirmPopupProp() {
+        this.setState({
+            confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                showConfirmDialog: false
+            })
+        });
+    }
+    
+    editSupplier(event) {
+        console.log(event.currentTarget.getAttribute("data-supplierid"));
+    }
+    
+    deleteSupplier(event) {
+        this.setState({
+            confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                showConfirmDialog: true,
+                s_id: event.currentTarget.getAttribute("data-supplierid")
+            })
         });
     }
 
@@ -110,6 +191,7 @@ class SupplierView extends React.Component{
                 <td>{item.s_phone}</td>
                 <td>{item.description}</td>
                 <td>{item.s_gst}</td>
+                <td><span className="padding10 handCursor" data-supplierid={item.s_id} onClick={this.editSupplier}><IconEdit width="18" height="18"/></span><span data-supplierid={item.s_id} className="padding10 handCursor" onClick={this.deleteSupplier}><IconDelete width="18" height="18"/></span></td>
             </tr>
         );
     }
@@ -122,9 +204,11 @@ class SupplierView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Suppliers"/>
+                        <AddSupplierPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp}/>
+                        <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="supplierView_actionBarContainerStyle">
                             <div className="supplierView_actionBarItemStyle">
-                                <Button className="appButtonStyle">Add Supplier</Button>
+                                <Button onClick={this.showAddUserpopup} className="appButtonStyle">Add Supplier</Button>
                             </div>
                             <div className="supplierView_actionBarItemStyle">
                                 <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
@@ -138,6 +222,7 @@ class SupplierView extends React.Component{
                                     <th>Phone</th>
                                     <th>Description</th>
                                     <th>GST</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

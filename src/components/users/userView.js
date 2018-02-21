@@ -205,7 +205,6 @@ class UserView extends React.Component{
                 showConfirmDialog: false
             })
         });
-
     }
 
     checkAuthorization() {

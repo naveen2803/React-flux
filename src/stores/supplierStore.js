@@ -52,6 +52,65 @@ Dispatcher.register(function(action) {
             break;
         }
 
+        case ActionTypes.ADD_SUPPLIER: {
+            var supplier = {
+                'token': action.data.token,
+                's_name': action.data.supplier.s_name,
+                's_address': action.data.supplier.s_address,
+                's_phone': action.data.supplier.s_phone,
+                'description': action.data.supplier.description,
+                's_gst': action.data.supplier.s_gst
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/addSupplier',
+                method: "POST",
+                form: supplier
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let supplierData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                        supplier.s_id = result.insertId;
+                    }
+
+                    SupplierStore.emitChange(EventTypes.ADD_SUPPLIER_EVENT, {eventName: "ADD_SUPPLIER", supplier: supplier, status: requestStatus});
+                }
+            });
+            break;
+        }
+
+        case ActionTypes.DELETE_SUPPLIER: {
+            var supplier = {
+                'token': action.data.token,
+                's_id': action.data.s_id
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/deleteSupplier',
+                method: "POST",
+                form: supplier
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let supplierData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    SupplierStore.emitChange(EventTypes.DELETE_SUPPLIER_EVENT, {eventName: "DELETE_SUPPLIER", s_id: action.data.s_id, status: requestStatus});
+                }
+            });
+            break;
+        }
+
         default:
             // no op
     }

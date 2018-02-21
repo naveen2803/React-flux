@@ -22,7 +22,9 @@ export default keyMirror({
 
 	GET_SUPPLIERS_EVENT: null,
 	ADD_SUPPLIER_EVENT: null,
+	DELETE_SUPPLIER_EVENT: null,
 
 	GET_CUSTOMERS_EVENT: null,
-	ADD_CUSTOMER_EVENT: null
+	ADD_CUSTOMER_EVENT: null,
+	DELETE_CUSTOMER_EVENT: null
 });

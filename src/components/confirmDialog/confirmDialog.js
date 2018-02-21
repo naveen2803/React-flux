@@ -4,7 +4,9 @@
 */
 
 import React from 'react';
+import ActionTypes from '../../constants/actionTypes';
 import UserActions from '../../actions/userActions';
+import SupplierActions from '../../actions/supplierActions';
 import {    Button,
             Popover,
             PopoverBody,
@@ -64,7 +66,19 @@ class ConfirmDialog extends React.Component{
     }
 
     takeAction() {
-        UserActions.deleteUser(sessionStorage.getItem("token"), this.props.options.user_id);
+        switch(this.props.options.actionType) {
+            case ActionTypes.DELETE_SUPPLIER: {
+                console.log(this.props.options.s_id);
+                SupplierActions.deleteSupplier(sessionStorage.getItem("token"), this.props.options.s_id);
+                break;
+            }
+            
+            case ActionTypes.DELETE_USER: {
+                UserActions.deleteUser(sessionStorage.getItem("token"), this.props.options.user_id);
+                break;
+            }
+        }
+        
         this.hidePopup();
     }
 
