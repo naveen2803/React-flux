@@ -34,6 +34,16 @@ var SupplierActions = {
                 s_id: s_id
             }
         });
+    },
+
+    updateSupplier: function(token, supplier) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.UPDATE_SUPPLIER,
+            data: {
+                token: token,
+                supplier: supplier
+            }
+        });
     }
 };
 

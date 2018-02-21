@@ -23,7 +23,7 @@ import SupplierActions from '../../actions/supplierActions';
 import toastr from 'toastr';
 import 'toastr/build/toastr.css';
 
-class AddSupplierpopup extends React.Component{
+class AddEditSupplierPopup extends React.Component{
     constructor(props) {
         super(props);
 
@@ -34,16 +34,18 @@ class AddSupplierpopup extends React.Component{
                 s_address: "",
                 s_phone: "",
                 description: "",
-                s_gst: ""
+                s_gst: "",
+                s_id: ""
             }
         };
 
         this.showPopup = this.showPopup.bind(this);
         this.hidePopup = this.hidePopup.bind(this);
-        this.addSupplier = this.addSupplier.bind(this);
+        this.add_EditSupplier = this.add_EditSupplier.bind(this);
         this.cb_onAddSupplierResult = this.cb_onAddSupplierResult.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
         this.clearSupplierState = this.clearSupplierState.bind(this);
+        this.cb_onUpdateSupplierResult = this.cb_onUpdateSupplierResult.bind(this);
     }
 
     /**
@@ -52,20 +54,26 @@ class AddSupplierpopup extends React.Component{
     */
     componentWillMount() {
         SupplierStore.addChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
+        SupplierStore.addChangeListener(EventTypes.UPDATE_SUPPLIER_EVENT, this.cb_onUpdateSupplierResult);
     }
 
     componentWillUnmount() {
         SupplierStore.removeChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
+        SupplierStore.removeChangeListener(EventTypes.UPDATE_SUPPLIER_EVENT, this.cb_onUpdateSupplierResult);
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            supplier: nextProps.supplier
+        });
+        
         if(nextProps.showPopup)
             this.showPopup();
     }
 
     showPopup() {
         this.setState({
-            showpopup: true
+            showpopup: true,
         });
     }
 
@@ -85,13 +93,20 @@ class AddSupplierpopup extends React.Component{
                 s_address: "",
                 s_phone: "",
                 description: "",
-                s_gst: ""
+                s_gst: "",
+                s_id: ""
             }
         });
     }
 
-    addSupplier() {
-        SupplierActions.addSupplier(sessionStorage.getItem("token"), this.state.supplier);
+    add_EditSupplier() {
+        if(this.props.isEditMode) {
+            SupplierActions.updateSupplier(sessionStorage.getItem("token"), this.state.supplier);
+        }
+        else {
+            SupplierActions.addSupplier(sessionStorage.getItem("token"), this.state.supplier);
+        }
+        
     }
 
     cb_onAddSupplierResult(event) {
@@ -100,6 +115,15 @@ class AddSupplierpopup extends React.Component{
         }
         else {
             toastr.error("Adding the supplier", "Error");
+        }
+    }
+    
+    cb_onUpdateSupplierResult(event) {
+        if(event.status === "SUCCESS") {
+            this.hidePopup();
+        }
+        else {
+            toastr.error("Updating the supplier", "Error");
         }
     }
 
@@ -118,7 +142,7 @@ class AddSupplierpopup extends React.Component{
         return (
             <div>
                 <Modal isOpen={this.state.showpopup} toggle={this.hidePopup}>
-                    <ModalHeader toggle={this.hidePopup}>Add Supplier</ModalHeader>
+                    <ModalHeader toggle={this.hidePopup}>{this.props.isEditMode?'Edit Supplier':'Add Supplier'}</ModalHeader>
                     <ModalBody>
                         <Form>
                             <FormGroup>
@@ -139,7 +163,7 @@ class AddSupplierpopup extends React.Component{
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button className="appButtonStyle" onClick={this.addSupplier}>Add</Button>
+                        <Button className="appButtonStyle" onClick={this.add_EditSupplier}>{this.props.isEditMode?'Update':'Add'}</Button>
                         <Button color="secondary" onClick={this.hidePopup}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
@@ -148,4 +172,4 @@ class AddSupplierpopup extends React.Component{
     }
 }
 
-export default AddSupplierpopup;
+export default AddEditSupplierPopup;

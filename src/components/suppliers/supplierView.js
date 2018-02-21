@@ -14,6 +14,7 @@ import IconCloudError from '../../assets/iconCloudError';
 import IconEdit from '../../assets/iconEdit';
 import IconDelete from '../../assets/iconDelete';
 import ConfirmDialog from '../confirmDialog/confirmDialog';
+import _ from 'lodash';
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.css';
@@ -28,7 +29,7 @@ import {    TabContent, TabPane,
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
-import AddSupplierPopup from './addSupplierPopup';
+import AddEditSupplierPopup from './add_editSupplierPopup';
 import { Table } from 'reactstrap';
 import './supplierViewCSS.css';
 
@@ -41,6 +42,7 @@ class SupplierView extends React.Component{
         *   loadingStatus:2 (error)
         **/
         this.state = {
+            isEditMode: false,
             showpopup: false,
             filteredSuppliers: [],
             orignalSuppliers: [],
@@ -52,6 +54,13 @@ class SupplierView extends React.Component{
                 actionType: ActionTypes.DELETE_SUPPLIER,
                 s_id: "",
                 bodyMessage: "Are you sure you want to delete the supplier?"
+            },
+            supplier: {
+                s_name: "",
+                s_address: "",
+                s_phone: "",
+                description: "",
+                s_gst: ""
             }
         };
 
@@ -137,7 +146,15 @@ class SupplierView extends React.Component{
     
     showAddUserpopup() {
         this.setState({
-            showPopup: true
+            showPopup: true,
+            supplier: {
+                s_name: "",
+                s_address: "",
+                s_phone: "",
+                description: "",
+                s_gst: ""
+            },
+            isEditMode: false
         });
     }
     
@@ -156,7 +173,12 @@ class SupplierView extends React.Component{
     }
     
     editSupplier(event) {
-        console.log(event.currentTarget.getAttribute("data-supplierid"));
+        let supplierToEdit = _.filter(this.state.orignalSuppliers, function(supplier) { return (supplier.s_id == event.currentTarget.getAttribute("data-supplierid")) })[0];
+        this.setState({
+            supplier: supplierToEdit,
+            isEditMode: true,
+            showPopup: true
+        });
     }
     
     deleteSupplier(event) {
@@ -204,7 +226,7 @@ class SupplierView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Suppliers"/>
-                        <AddSupplierPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp}/>
+                        <AddEditSupplierPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} supplier={this.state.supplier} isEditMode={this.state.isEditMode}/>
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="supplierView_actionBarContainerStyle">
                             <div className="supplierView_actionBarItemStyle">

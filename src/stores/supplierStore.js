@@ -111,6 +111,37 @@ Dispatcher.register(function(action) {
             break;
         }
 
+        case ActionTypes.UPDATE_SUPPLIER: {
+            var supplier = {
+                'token': action.data.token,
+                's_name': action.data.supplier.s_name,
+                's_phone': action.data.supplier.s_phone,
+                's_address': action.data.supplier.s_address,
+                's_gst': action.data.supplier.s_gst,
+                's_id' : action.data.supplier.s_id,
+                'description': action.data.supplier.description
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/updateSupplier',
+                method: "POST",
+                form: supplier
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    SupplierStore.emitChange(EventTypes.UPDATE_SUPPLIER_EVENT, {eventName: "UPDATE_SUPPLIER", supplier: supplier, status: requestStatus});
+                }
+            });
+            break;
+        }
+
         default:
             // no op
     }

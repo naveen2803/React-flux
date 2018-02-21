@@ -19,6 +19,7 @@ export default keyMirror({
 	GET_SUPPLIERS:null,
 	ADD_SUPPLIER: null,
 	DELETE_SUPPLIER: null,
+	UPDATE_SUPPLIER: null,
 
 	GET_CUSTOMERS:null,
 	ADD_CUSTOMER: null,
