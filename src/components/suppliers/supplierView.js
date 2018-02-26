@@ -60,20 +60,21 @@ class SupplierView extends React.Component{
                 s_address: "",
                 s_phone: "",
                 description: "",
-                s_gst: ""
+                s_gst: "",
+                s_id: ""
             }
         };
-
 
         this.updateSearch = this.updateSearch.bind(this);
         this.cb_onGetSuppliersResult = this.cb_onGetSuppliersResult.bind(this);
         this.cb_onAddSupplierResult = this.cb_onAddSupplierResult.bind(this);
         this.togglePopupProp = this.togglePopupProp.bind(this);
-        this.showAddUserpopup = this.showAddUserpopup.bind(this);
+        this.showAddSupplierPopup = this.showAddSupplierPopup.bind(this);
         this.editSupplier = this.editSupplier.bind(this);
         this.deleteSupplier = this.deleteSupplier.bind(this);
         this.toggleConfirmPopupProp = this.toggleConfirmPopupProp.bind(this);
         this.cb_onSupplierDeleteResult = this.cb_onSupplierDeleteResult.bind(this);
+        this.cb_onSupplierUpdateResult = this.cb_onSupplierUpdateResult.bind(this);
 
         // Action calls
         SupplierActions.getSuppliers(sessionStorage.getItem("token"));
@@ -87,12 +88,18 @@ class SupplierView extends React.Component{
         SupplierStore.addChangeListener(EventTypes.GET_SUPPLIERS_EVENT, this.cb_onGetSuppliersResult);
         SupplierStore.addChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
         SupplierStore.addChangeListener(EventTypes.DELETE_SUPPLIER_EVENT, this.cb_onSupplierDeleteResult);
+        SupplierStore.addChangeListener(EventTypes.UPDATE_SUPPLIER_EVENT, this.cb_onSupplierUpdateResult);
     }
 
     componentWillUnmount() {
         SupplierStore.removeChangeListener(EventTypes.GET_SUPPLIERS_EVENT, this.cb_onGetSuppliersResult);
         SupplierStore.removeChangeListener(EventTypes.ADD_SUPPLIER_EVENT, this.cb_onAddSupplierResult);
         SupplierStore.removeChangeListener(EventTypes.DELETE_SUPPLIER_EVENT, this.cb_onSupplierDeleteResult);
+        SupplierStore.removeChangeListener(EventTypes.UPDATE_SUPPLIER_EVENT, this.cb_onSupplierUpdateResult);
+    }
+    
+    cb_onSupplierUpdateResult(event) {
+        console.log("HELLo world");
     }
     
     cb_onAddSupplierResult(event) {
@@ -144,7 +151,7 @@ class SupplierView extends React.Component{
         }
     }
     
-    showAddUserpopup() {
+    showAddSupplierPopup() {
         this.setState({
             showPopup: true,
             supplier: {
@@ -152,7 +159,8 @@ class SupplierView extends React.Component{
                 s_address: "",
                 s_phone: "",
                 description: "",
-                s_gst: ""
+                s_gst: "",
+                s_id: ""
             },
             isEditMode: false
         });
@@ -230,7 +238,7 @@ class SupplierView extends React.Component{
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="supplierView_actionBarContainerStyle">
                             <div className="supplierView_actionBarItemStyle">
-                                <Button onClick={this.showAddUserpopup} className="appButtonStyle">Add Supplier</Button>
+                                <Button onClick={this.showAddSupplierPopup} className="appButtonStyle">Add Supplier</Button>
                             </div>
                             <div className="supplierView_actionBarItemStyle">
                                 <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>

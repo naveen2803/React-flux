@@ -54,6 +54,93 @@ Dispatcher.register(function(action) {
         }
 
         case ActionTypes.ADD_CUSTOMER: {
+            var customer = {
+                'token': action.data.token,
+                'c_name': action.data.customer.c_name,
+                'c_address': action.data.customer.c_address,
+                'c_phone': action.data.customer.c_phone,
+                'description': action.data.customer.description,
+                'c_gst': action.data.customer.c_gst
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/addCustomer',
+                method: "POST",
+                form: customer
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let customerData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                        customer.c_id = result.insertId;
+                    }
+
+                    CustomerStore.emitChange(EventTypes.ADD_CUSTOMER_EVENT, {eventName: "ADD_CUSTOMER", customer: customer, status: requestStatus});
+                }
+            });
+            break;
+        }
+
+        case ActionTypes.DELETE_CUSTOMER: {
+            console.log("I am here");
+            var customer = {
+                'token': action.data.token,
+                'c_id': action.data.c_id
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/deleteCustomer',
+                method: "POST",
+                form: customer
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let customerData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    CustomerStore.emitChange(EventTypes.DELETE_CUSTOMER_EVENT, {eventName: "DELETE_CUSTOMER", c_id: action.data.c_id, status: requestStatus});
+                }
+            });
+            break;
+        }
+
+        case ActionTypes.UPDATE_CUSTOMER: {
+            var customer = {
+                'token': action.data.token,
+                'c_name': action.data.customer.c_name,
+                'c_phone': action.data.customer.c_phone,
+                'c_address': action.data.customer.c_address,
+                'c_gst': action.data.customer.c_gst,
+                'c_id' : action.data.customer.c_id,
+                'description': action.data.customer.description
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/updateCustomer',
+                method: "POST",
+                form: customer
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    CustomerStore.emitChange(EventTypes.UPDATE_CUSTOMER_EVENT, {eventName: "UPDATE_CUSTOMER", customer: customer, status: requestStatus});
+                }
+            });
             break;
         }
 

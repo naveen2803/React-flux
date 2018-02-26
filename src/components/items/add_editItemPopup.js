@@ -25,28 +25,91 @@ class AddItemPopup extends React.Component{
         super(props);
 
         this.state = {
+            showpopup: false,
             item: {
                 item_code: "",
                 base: "",
                 price: "",
-                description: ""
+                description: "",
+                image_url: "",
+                item_id: ""
             }
         };
-
-        this.addItem = this.addItem.bind(this);
+        this.showPopup = this.showPopup.bind(this);
+        this.hidePopup = this.hidePopup.bind(this);
+        this.add_EditItem = this.add_EditItem.bind(this);
+        
+        this.cb_onAddItemResult = this.cb_onAddItemResult.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
-        this.clearUserState = this.clearUserState.bind(this);
+        this.clearItemState = this.clearItemState.bind(this);
+        this.cb_onUpdateItemResult = this.cb_onUpdateItemResult.bind(this);
+    }
+    
+    componentWillMount() {
+        ItemStore.addChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
+        ItemStore.addChangeListener(EventTypes.UPDATE_ITEM_EVENT, this.cb_onUpdateItemResult);
     }
 
-    addItem() {
-        if( this.validateItemData() ) {
-            ItemActions.addItem(sessionStorage.getItem("token"), this.state.item);
-            this.clearUserState();
+    componentWillUnmount() {
+        ItemStore.removeChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
+        ItemStore.removeChangeListener(EventTypes.UPDATE_ITEM_EVENT, this.cb_onUpdateItemResult);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            item: nextProps.item
+        });
+        
+        if(nextProps.showPopup)
+            this.showPopup();
+    }
+
+    showPopup() {
+        this.setState({
+            showpopup: true,
+        });
+    }
+
+    hidePopup() {
+        this.setState({
+            showpopup: false
+        });
+
+        this.clearItemState();
+        this.props.togglePopup();
+    }
+    
+    cb_onAddItemResult(event) {
+        if(event.status === "SUCCESS") {
+            this.hidePopup();
         }
         else {
-            
+            toastr.error("Adding the item", "Error");
         }
-        
+    }
+    
+    cb_onUpdateItemResult(event) {
+        if(event.status === "SUCCESS") {
+            this.hidePopup();
+        }
+        else {
+            toastr.error("Updating the item", "Error");
+        }
+    }
+    
+    add_EditItem() {
+        if(this.props.isEditMode) {
+            ItemActions.updateItem(sessionStorage.getItem("token"), this.state.item);
+        }
+        else {
+            if( this.validateItemData() ) {
+                ItemActions.addItem(sessionStorage.getItem("token"), this.state.item);
+                this.clearItemState();
+            }
+            else {
+                
+            }
+        }
         
     }
     
@@ -80,13 +143,15 @@ class AddItemPopup extends React.Component{
         });
     }
 
-    clearUserState() {
+    clearItemState() {
         this.setState({
             item: {
                 item_code: "",
                 base: "",
                 price: "",
-                description: ""
+                description: "",
+                image_url: "",
+                item_id: ""
             }
         });
     }
@@ -94,8 +159,8 @@ class AddItemPopup extends React.Component{
     render (){
         return (
             <div>
-                <Modal isOpen={this.props.showpopup} toggle={this.props.toggleModel}>
-                    <ModalHeader toggle={this.props.toggleModel}>Add Item</ModalHeader>
+                <Modal isOpen={this.state.showpopup} toggle={this.hidePopup}>
+                    <ModalHeader toggle={this.hidePopup}>{this.props.isEditMode?'Edit Item':'Add Item'}</ModalHeader>
                     <ModalBody>
                         <Form>
                             <FormGroup>
@@ -113,8 +178,8 @@ class AddItemPopup extends React.Component{
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.addItem}>Add</Button>
-                        <Button color="secondary" onClick={this.props.toggleModel}>Cancel</Button>
+                        <Button className="appButtonStyle" onClick={this.add_EditItem}>{this.props.isEditMode?'Update':'Add'}</Button>
+                        <Button color="secondary" onClick={this.hidePopup}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
             </div>

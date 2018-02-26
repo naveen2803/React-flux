@@ -7,6 +7,8 @@ import React from 'react';
 import ActionTypes from '../../constants/actionTypes';
 import UserActions from '../../actions/userActions';
 import SupplierActions from '../../actions/supplierActions';
+import CustomerActions from '../../actions/customerActions';
+import ItemActions from '../../actions/itemActions';
 import {    Button,
             Popover,
             PopoverBody,
@@ -68,13 +70,22 @@ class ConfirmDialog extends React.Component{
     takeAction() {
         switch(this.props.options.actionType) {
             case ActionTypes.DELETE_SUPPLIER: {
-                console.log(this.props.options.s_id);
                 SupplierActions.deleteSupplier(sessionStorage.getItem("token"), this.props.options.s_id);
                 break;
             }
             
             case ActionTypes.DELETE_USER: {
                 UserActions.deleteUser(sessionStorage.getItem("token"), this.props.options.user_id);
+                break;
+            }
+            
+            case ActionTypes.DELETE_CUSTOMER: {
+                CustomerActions.deleteCustomer(sessionStorage.getItem("token"), this.props.options.c_id);
+                break;
+            }
+            
+            case ActionTypes.DELETE_ITEM: {
+                ItemActions.deleteItem(sessionStorage.getItem("token"), this.props.options.item_id);
                 break;
             }
         }

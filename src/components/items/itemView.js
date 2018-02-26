@@ -5,14 +5,21 @@
 
 import React from 'react';
 
+import ActionTypes from '../../constants/actionTypes';
 import EventTypes from '../../constants/eventTypes';
 import ItemStore from '../../stores/itemStore';
 import ItemActions from '../../actions/itemActions';
 import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
 import { decodeToken } from '../../utils/secret';
+import IconEdit from '../../assets/iconEdit';
+import IconDelete from '../../assets/iconDelete';
+
+import _ from 'lodash';
 import toastr from 'toastr';
-import 'toastr/build/toastr.css'
+import 'toastr/build/toastr.css';
+import ConfirmDialog from '../confirmDialog/confirmDialog';
+
 import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
@@ -22,7 +29,7 @@ import {    TabContent, TabPane,
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
-import AddItemPopup from './addItemPopup';
+import AddEditItemPopup from './add_editItemPopup';
 import { Table } from 'reactstrap';
 import './itemViewCSS.css';
 
@@ -38,14 +45,35 @@ class ItemView extends React.Component{
             showpopup: false,
             filteredItems: [],
             orignalItems: [],
-            loadingStatus:0
+            loadingStatus:0,
+            confirmDialogOptions: {
+                showConfirmDialog: false,
+                heading: "Delete Item",
+                actionBtnLabel: "Delete",
+                actionType: ActionTypes.DELETE_ITEM,
+                item_id: "",
+                bodyMessage: "Are you sure you want to delete the item?"
+            },
+            item: {
+                item_code: "",
+                base: "",
+                price: "",
+                description: "",
+                image_url: "",
+                item_id: ""
+            }
         };
 
-
+        this.showAddItemPopup = this.showAddItemPopup.bind(this);
         this.updateSearch = this.updateSearch.bind(this);
-        this.toggleModel = this.toggleModel.bind(this);
+        this.togglePopupProp = this.togglePopupProp.bind(this);
+        this.editItem = this.editItem.bind(this);
+        this.deleteItem = this.deleteItem.bind(this);
         this.cb_onGetItemsResult = this.cb_onGetItemsResult.bind(this);
         this.cb_onAddItemResult = this.cb_onAddItemResult.bind(this);
+        this.toggleConfirmPopupProp = this.toggleConfirmPopupProp.bind(this);
+        this.cb_onItemDeleteResult = this.cb_onItemDeleteResult.bind(this);
+        this.cb_onItemUpdateResult = this.cb_onItemUpdateResult.bind(this);
 
         // Action calls
         ItemActions.getItems(sessionStorage.getItem("token"));
@@ -58,20 +86,57 @@ class ItemView extends React.Component{
     componentWillMount() {
         ItemStore.addChangeListener(EventTypes.GET_ITEMS_EVENT, this.cb_onGetItemsResult);
         ItemStore.addChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
+        ItemStore.addChangeListener(EventTypes.DELETE_ITEM_EVENT, this.cb_onItemDeleteResult);
+        ItemStore.addChangeListener(EventTypes.UPDATE_ITEM_EVENT, this.cb_onItemUpdateResult);
     }
 
     componentWillUnmount() {
         ItemStore.removeChangeListener(EventTypes.GET_ITEMS_EVENT, this.cb_onGetItemsResult);
         ItemStore.removeChangeListener(EventTypes.ADD_ITEM_EVENT, this.cb_onAddItemResult);
+        ItemStore.removeChangeListener(EventTypes.DELETE_ITEM_EVENT, this.cb_onItemDeleteResult);
+        ItemStore.removeChangeListener(EventTypes.UPDATE_ITEM_EVENT, this.cb_onItemUpdateResult);
     }
 
+    
+    cb_onItemDeleteResult(event) {
+        if(event.status === "SUCCESS") {
+            var arr = this.state.orignalItems.filter(item => item.item_id != event.item_id);
+            this.setState({
+                filteredItems : arr,
+                orignalItems : arr,
+                confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                    showConfirmDialog: false
+                })
+            });
+
+            toastr.success("Item deleted", "Success");
+        }
+        else {
+            toastr.error("Deleting the Item", "Error");
+        }
+    }
+    
+    toggleConfirmPopupProp() {
+        this.setState({
+            confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                showConfirmDialog: false
+            })
+        });
+    }
+    
+    cb_onItemUpdateResult(event) {
+        
+    }
+    
     cb_onAddItemResult(event) {
         if(event.status === "SUCCESS") {
-            // this.setState({
-            //     filteredItems: event.items,
-            //     orignalItems: event.items,
-            //     loadingStatus: 1
-            // });
+            this.setState({
+                orignalItems: [...this.state.orignalItems, event.item],
+                filteredItems: [...this.state.orignalItems, event.item],
+                showpopup: false
+            });
+
+            toastr.success("Item Added", "Success");
         }
         else {
             toastr.error("Adding the item", "Error");
@@ -96,10 +161,42 @@ class ItemView extends React.Component{
             });
         }
     }
-
-    toggleModel() {
+    showAddItemPopup() {
         this.setState({
-            showpopup: !this.state.showpopup
+            showPopup: true,
+            item: {
+                item_code: "",
+                base: "",
+                price: "",
+                description: "",
+                image_url: "",
+                item_id: ""
+            },
+            isEditMode: false
+        });
+    }
+    
+    togglePopupProp() {
+        this.setState({
+            showPopup: false
+        });
+    }
+    
+    editItem(event) {
+        let itemToEdit = _.filter(this.state.orignalItems, function(item) { return (item.item_id == event.currentTarget.getAttribute("data-itemid")) })[0];
+        this.setState({
+            item: itemToEdit,
+            isEditMode: true,
+            showPopup: true
+        });
+    }
+    
+    deleteItem(event) {
+        this.setState({
+            confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
+                showConfirmDialog: true,
+                item_id: event.currentTarget.getAttribute("data-itemid")
+            })
         });
     }
 
@@ -124,6 +221,7 @@ class ItemView extends React.Component{
                 <td>{item.base}</td>
                 <td>{item.price}</td>
                 <td>{item.description}</td>
+                <td><span className="padding10 handCursor" data-itemid={item.item_id} onClick={this.editItem}><IconEdit width="18" height="18"/></span><span data-itemid={item.item_id} className="padding10 handCursor" onClick={this.deleteItem}><IconDelete width="18" height="18"/></span></td>
             </tr>
         );
     }
@@ -136,10 +234,11 @@ class ItemView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Items"/>
-                        <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} items={this.state.orignalItems}/>
+                        <AddEditItemPopup {...this.props} showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} item={this.state.item} items={this.state.orignalItems} isEditMode={this.state.isEditMode}/>
+                        <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="itemView_actionBarContainerStyle">
                             <div className="itemView_actionBarItemStyle">
-                                <Button className="appButtonStyle" onClick={this.toggleModel}>Add Item</Button>
+                                <Button className="appButtonStyle" onClick={this.showAddItemPopup}>Add Item</Button>
                             </div>
                             <div className="itemView_actionBarItemStyle">
                                 <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
@@ -152,6 +251,7 @@ class ItemView extends React.Component{
                                     <th>Base</th>
                                     <th>Price</th>
                                     <th>Description</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,7 +266,7 @@ class ItemView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Items"/>
-                        <AddItemPopup {...this.props} showpopup={this.state.showpopup} toggleModel={this.toggleModel} items={this.state.orignalItems}/>
+                        <AddEditItemPopup {...this.props} showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} item={this.state.item} items={this.state.orignalItems} isEditMode={this.state.isEditMode}/>
                         <div className="itemView_actionBarContainerStyle">
                             <div className="itemView_actionBarItemStyle">
                                 <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
@@ -179,6 +279,7 @@ class ItemView extends React.Component{
                                     <th>Base</th>
                                     <th>Price</th>
                                     <th>Description</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

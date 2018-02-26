@@ -24,6 +24,26 @@ var ItemActions = {
                 item: item
             }
         });
+    },
+
+    deleteItem: function(token, item_id) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.DELETE_ITEM,
+            data: {
+                token: token,
+                item_id: item_id
+            }
+        });
+    },
+
+    updateItem: function(token, item) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.UPDATE_ITEM,
+            data: {
+                token: token,
+                item: item
+            }
+        });
     }
 };
 

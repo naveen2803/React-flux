@@ -27,5 +27,6 @@ export default keyMirror({
 
 	GET_CUSTOMERS_EVENT: null,
 	ADD_CUSTOMER_EVENT: null,
-	DELETE_CUSTOMER_EVENT: null
+	DELETE_CUSTOMER_EVENT: null,
+	UPDATE_CUSTOMER_EVENT: null
 });

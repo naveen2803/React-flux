@@ -16,6 +16,36 @@ var CustomerActions = {
             }
 
         });
+    },
+
+    addCustomer: function(token, customer) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.ADD_CUSTOMER,
+            data: {
+                token: token,
+                customer: customer
+            }
+        });
+    },
+
+    deleteCustomer: function(token, c_id) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.DELETE_CUSTOMER,
+            data: {
+                token: token,
+                c_id: c_id
+            }
+        });
+    },
+
+    updateCustomer: function(token, customer) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.UPDATE_CUSTOMER,
+            data: {
+                token: token,
+                customer: customer
+            }
+        });
     }
 };
 

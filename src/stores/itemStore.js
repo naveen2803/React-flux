@@ -40,7 +40,6 @@ Dispatcher.register(function(action) {
                 let requestStatus = "ERROR";
                 if (!error && response.statusCode == 200) {
                     let itemsData;
-                    console.log(body);
                     var result = JSON.parse(body);
                     if(result.code == undefined) {
                         requestStatus = "SUCCESS";
@@ -60,7 +59,8 @@ Dispatcher.register(function(action) {
                 'base': action.data.item.base,
                 'price': action.data.item.price,
                 'description': action.data.item.description,
-                'image_url': ''
+                'image_url': '',
+                'item_id': ''
             };
             // call service to check the login credentials and trigger event accordingly
             var options = {
@@ -73,14 +73,72 @@ Dispatcher.register(function(action) {
                 let requestStatus = "ERROR";
                 if (!error && response.statusCode == 200) {
                     let itemData;
-                    console.log(body);
                     var result = JSON.parse(body);
                     if(result.code == undefined) {
                         requestStatus = "SUCCESS";
-                        itemData = result;
+                        formData.item_id = result.insertId;
+                        itemData = formData;
                     }
 
                     ItemStore.emitChange(EventTypes.ADD_ITEM_EVENT, {eventName: "ADD_ITEM", item: itemData, status: requestStatus});
+                }
+            });
+            break;
+        }
+
+        case ActionTypes.DELETE_ITEM: {
+            var item = {
+                'token': action.data.token,
+                'item_id': action.data.item_id
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/deleteItem',
+                method: "POST",
+                form: item
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let itemData;
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    ItemStore.emitChange(EventTypes.DELETE_ITEM_EVENT, {eventName: "DELETE_ITEM", item_id: action.data.item_id, status: requestStatus});
+                }
+            });
+            break;
+        }
+
+        case ActionTypes.UPDATE_ITEM: {
+            var item = {
+                'token': action.data.token,
+                'item_code': action.data.item.item_code,
+                'base': action.data.item.base,
+                'price': action.data.item.price,
+                'description': action.data.item.description,
+                'image_url': '',
+                'item_id': action.data.item.item_id
+            };
+            // call service to check the login credentials and trigger event accordingly
+            var options = {
+                url: getBase() + '/updateItem',
+                method: "POST",
+                form: item
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+
+                    ItemStore.emitChange(EventTypes.UPDATE_ITEM_EVENT, {eventName: "UPDATE_ITEM", item: item, status: requestStatus});
                 }
             });
             break;
