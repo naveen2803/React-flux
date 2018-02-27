@@ -15,6 +15,10 @@ import IconSuppliers from '../../assets/iconSuppliers';
 import IconCustomers from '../../assets/iconCustomers';
 import IconItems from '../../assets/iconItems';
 
+import EventTypes from '../../constants/eventTypes';
+import LoginStore from '../../stores/loginStore';
+import LoginActions from '../../actions/loginActions';
+
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
 
@@ -33,8 +37,10 @@ import {    Button,
 class HeaderComp extends React.Component{
     constructor(props) {
         super(props);
-
         this.state = {
+            oldPassword: "",
+            newPassword: "",
+            reTypeNewPassword: "",
             popoverOpen: false,
             modal: false,
             menuItems: ["Items", "Add Order"]
@@ -42,10 +48,12 @@ class HeaderComp extends React.Component{
 
         this.toggle = this.toggle.bind(this);
         this.logout = this.logout.bind(this);
+        this.onTextChange = this.onTextChange.bind(this);
         this.changePassword = this.changePassword.bind(this);
         this.toggleModel = this.toggleModel.bind(this);
-        this.passwordChanged = this.passwordChanged.bind(this);
+        this.passwordChangeClick = this.passwordChangeClick.bind(this);
         this.changeLink = this.changeLink.bind(this);
+        this.on_passwordChanged = this.on_passwordChanged.bind(this);
     }
 
     /**
@@ -53,6 +61,7 @@ class HeaderComp extends React.Component{
      * WHY: Good spot to set initial state
     */
     componentWillMount() {
+        LoginStore.addChangeListener(EventTypes.CHANGE_PASSWORD_EVENT, this.on_passwordChanged);
         var token = sessionStorage.getItem("token");
         try {
             var decoded = decodeToken(token);
@@ -71,6 +80,10 @@ class HeaderComp extends React.Component{
             console.log(error);
         }
     }
+    
+    componentWillUnmount() {
+        LoginStore.removeChangeListener(EventTypes.CHANGE_PASSWORD_EVENT, this.on_passwordChanged);
+    }
 
     toggle() {
         this.setState({
@@ -79,10 +92,10 @@ class HeaderComp extends React.Component{
     }
 
     toggleModel() {
-    this.setState({
-      modal: !this.state.modal
-    });
-  }
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     logout() {
         sessionStorage.removeItem("token");
@@ -94,9 +107,27 @@ class HeaderComp extends React.Component{
         this.toggleModel();
     }
 
-    passwordChanged() {
-        toastr.success('Password updated!', 'Success');
-        this.toggleModel();
+    passwordChangeClick() {
+        if(this.state.newPassword === this.state.reTypeNewPassword) {
+            LoginActions.changePassword(
+                sessionStorage.getItem("token"),            
+                this.state.oldPassword,
+                this.state.newPassword
+            );
+            this.toggleModel();
+        }
+        else {
+            toastr.warning('Passwords should match', 'Warning'); 
+        }
+    }
+    
+    on_passwordChanged(event) {
+        if(event.status === "SUCCESS") {
+            toastr.success('Password updated!', 'Success');
+        }
+        else {
+            toastr.error('Changing the password', 'Error'); 
+        }
     }
 
     changeLink(event) {
@@ -106,6 +137,15 @@ class HeaderComp extends React.Component{
         else {
             this.props.history.push("/" + event.target.name);
         }
+    }
+    
+    onTextChange(event) {
+        var field = event.target.name;
+		var value = event.target.value;
+        var updatedProperty = {};
+        updatedProperty[field] = value;
+        var updatedState = Object.assign(this.state, updatedProperty);
+        this.setState(updatedState);
     }
 
     addMenuItem(menuItem, index) {
@@ -170,18 +210,18 @@ class HeaderComp extends React.Component{
                         <ModalBody>
                             <Form>
                                 <FormGroup>
-                                    <Input type="password" name="oldPassword" id="oldPassword"  placeholder="Old password" className="formItemVerticalStyle"/>
+                                    <Input type="password" name="oldPassword" id="oldPassword"  placeholder="Old password" value={this.state.oldPassword} onChange={this.onTextChange} className="formItemVerticalStyle"/>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Input type="password" name="newPassword" id="newPassword" placeholder="New password" className="formItemVerticalStyle"/>
+                                    <Input type="password" name="newPassword" id="newPassword" placeholder="New password" value={this.state.newPassword} onChange={this.onTextChange } className="formItemVerticalStyle"/>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Input type="password" name="reTypeNewPassword" id="reTypeNewPassword" placeholder="Re-enter new password" className="formItemVerticalStyle"/>
+                                    <Input type="password" name="reTypeNewPassword" id="reTypeNewPassword" value={this.state.reTypeNewPassword} onChange={this.onTextChange } placeholder="Re-enter new password" className="formItemVerticalStyle"/>
                                 </FormGroup>
                             </Form>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this.passwordChanged}>Change</Button>
+                            <Button className="appButtonStyle" onClick={this.passwordChangeClick}>Change</Button>
                             <Button color="secondary" onClick={this.toggleModel}>Cancel</Button>
                         </ModalFooter>
                     </Modal>

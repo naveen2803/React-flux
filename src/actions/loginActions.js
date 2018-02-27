@@ -7,6 +7,17 @@ import Dispatcher from '../dispatcher/appDispatcher';
 import ActionTypes from '../constants/actionTypes';
 
 var LoginActions = {
+    changePassword: function(token, oldPassword, newPassword) {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.CHANGE_PASSWORD,
+            data: {
+                'token': token,
+                'oldPassword': oldPassword,
+                'newPassword': newPassword
+            }
+        });
+    },
+
     login: function(params) {
         Dispatcher.dispatch({
             actionType: ActionTypes.LOGIN,

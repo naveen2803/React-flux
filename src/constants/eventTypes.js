@@ -8,6 +8,7 @@ import keyMirror from 'key-mirror';
 export default keyMirror({
 	LOGIN_EVENT: null,
 	LOGOUT_EVENT: null,
+	CHANGE_PASSWORD_EVENT: null,
 
 	GET_ITEMS_EVENT: null,
 	ADD_ITEM_EVENT: null,
@@ -16,6 +17,7 @@ export default keyMirror({
 	GET_USERS_EVENT: null,
 	ADD_USER_EVENT: null,
 	DELETE_USER_EVENT: null,
+	UPDATE_USER_EVENT: null,
 
 	GET_ORDERS_EVENT: null,
 	ADD_ORDER_EVENT: null,

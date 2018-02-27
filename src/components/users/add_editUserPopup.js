@@ -36,14 +36,16 @@ class AddUserpopup extends React.Component{
                 address: "",
                 email: "",
                 username: "",
-                role: "USER"
+                role: "USER",
+                user_id: ""
             }
         };
 
         this.showPopup = this.showPopup.bind(this);
         this.hidePopup = this.hidePopup.bind(this);
-        this.addUser = this.addUser.bind(this);
+        this.add_EditUser = this.add_EditUser.bind(this);
         this.cb_onAddUsersResult = this.cb_onAddUsersResult.bind(this);
+        this.cb_onUpdateUserResult = this.cb_onUpdateUserResult.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
         this.clearUserState = this.clearUserState.bind(this);
     }
@@ -54,13 +56,19 @@ class AddUserpopup extends React.Component{
     */
     componentWillMount() {
         UserStore.addChangeListener(EventTypes.ADD_USER_EVENT, this.cb_onAddUsersResult);
+        UserStore.addChangeListener(EventTypes.UPDATE_USER_EVENT, this.cb_onUpdateUserResult);
     }
 
     componentWillUnmount() {
         UserStore.removeChangeListener(EventTypes.ADD_USER_EVENT, this.cb_onAddUsersResult);
+        UserStore.removeChangeListener(EventTypes.UPDATE_USER_EVENT, this.cb_onUpdateUserResult);
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            user: nextProps.user
+        });
+
         if(nextProps.showPopup)
             this.showPopup();
     }
@@ -94,7 +102,42 @@ class AddUserpopup extends React.Component{
         });
     }
 
-    addUser() {
+    add_EditUser() {
+        if(this.props.isEditMode) {
+            if( this.validateExistingUser() ) {
+                console.log("update user....");
+                UserActions.updateUser(sessionStorage.getItem("token"), this.state.user);
+            }
+            else {}
+        }
+        else {
+            if( this.validateNewUser() ) {
+                console.log("Add user....");
+                UserActions.addUser(sessionStorage.getItem("token"), this.state.user);
+            }
+            else {}
+        }
+    }
+
+    cb_onUpdateUserResult(event) {
+        if(event.status === "SUCCESS") {
+            this.hidePopup();
+        }
+        else {
+            toastr.error("Updating the customer", "Error");
+        }
+    }
+    
+    cb_onAddUsersResult(event) {
+        if(event.status === "SUCCESS") {
+            this.hidePopup();
+        }
+        else {
+            toastr.error("Adding the user", "Error");
+        }
+    }
+    
+    validateNewUser() {
         var userObject = {};
         var username = this.state.user.username.trim();
         var sameUsername = this.props.existingUsers.find(function(user) {            
@@ -111,18 +154,24 @@ class AddUserpopup extends React.Component{
             toastr.error("Username exists", "Error");
         }
         else {
-            UserActions.addUser(sessionStorage.getItem("token"), this.state.user);
+            return true;
         }
         
+        return false;
     }
-
-    cb_onAddUsersResult(event) {
-        if(event.status === "SUCCESS") {
-            this.hidePopup();
+    
+    validateExistingUser() {
+        if( this.state.user.firstname.trim() === ""
+        ||  this.state.user.phone.trim() === ""
+        ||  this.state.user.username.trim() === "")
+        {
+            toastr.error("Firstname, phone and username are mandatory fields", "Error");
         }
         else {
-            toastr.error("Adding the user", "Error");
+            return true;
         }
+        
+        return false;
     }
 
     onTextChange(event) {
@@ -140,7 +189,7 @@ class AddUserpopup extends React.Component{
         return (
             <div>
                 <Modal isOpen={this.state.showpopup} toggle={this.hidePopup}>
-                    <ModalHeader toggle={this.hidePopup}>Add User</ModalHeader>
+                    <ModalHeader toggle={this.hidePopup}>{this.props.isEditMode?'Edit User':'Add User'}</ModalHeader>
                     <ModalBody>
                         <Form>
                             <FormGroup>
@@ -159,7 +208,7 @@ class AddUserpopup extends React.Component{
                                 <Input type="email" name="email" id="email" value={this.state.user.email} onChange={this.onTextChange} placeholder="Email" className="formItemVerticalStyle"/>
                             </FormGroup>
                             <FormGroup>
-                                <Input type="text" name="username" id="username" value={this.state.user.username} onChange={this.onTextChange} placeholder="Username" className="formItemVerticalStyle"/>
+                                <Input type="text" name="username" id="username" value={this.state.user.username} onChange={this.onTextChange} placeholder="Username" className="formItemVerticalStyle" disabled={this.props.isEditMode?'disabled':''}/>
                             </FormGroup>
                                 <FormGroup>
                                 <Input type="select" name="role" id="role" value={this.state.user.role} onChange={this.onTextChange} placeholder="Role" className="formItemVerticalStyle">
@@ -170,7 +219,7 @@ class AddUserpopup extends React.Component{
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button className="appButtonStyle" onClick={this.addUser}>Add</Button>
+                        <Button className="appButtonStyle" onClick={this.add_EditUser}>{this.props.isEditMode?'Update':'Add'}</Button>
                         <Button color="secondary" onClick={this.hidePopup}>Cancel</Button>
                     </ModalFooter>
                 </Modal>

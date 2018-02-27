@@ -40,7 +40,6 @@ Dispatcher.register(function(action) {
                 let requestStatus = "ERROR";
                 if (!error && response.statusCode == 200) {
                     let userData;
-                    console.log(body);
                     var result = JSON.parse(body);
                     if(result.length > 0) {
                         requestStatus = "SUCCESS";
@@ -54,6 +53,35 @@ Dispatcher.register(function(action) {
         }
         case ActionTypes.LOGOUT: {
             LoginStore.emitChange(EventTypes.LOGOUT_EVENT, {eventName: "Logout_Event"});
+            break;
+        }
+
+        case ActionTypes.CHANGE_PASSWORD: {
+            // call service to check the login credentials and trigger event accordingly
+            var data = {
+                'token': action.data.token,
+                'oldPassword': action.data.oldPassword,
+                'newPassword': action.data.newPassword
+            };
+
+            var options = {
+                url: getBase() + '/changePassword',
+                method: "POST",
+                form: data
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    let userData;
+                    var result = JSON.parse(body);
+                    if(result.affectedRows > 0) {
+                        requestStatus = "SUCCESS";
+                    }
+                    LoginStore.emitChange(EventTypes.CHANGE_PASSWORD_EVENT, {eventName: "Change_password_event", data: data, status: requestStatus});
+                }
+            });
+
             break;
         }
 

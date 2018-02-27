@@ -8,6 +8,7 @@ import keyMirror from 'key-mirror';
 export default keyMirror({
 	LOGIN: null,
 	LOGOUT: null,
+	CHANGE_PASSWORD: null,
 
 	GET_ITEMS:null,
 	ADD_ITEM: null,
@@ -28,5 +29,6 @@ export default keyMirror({
 
 	GET_USERS:null,
 	ADD_USER: null,
-	DELETE_USER: null
+	DELETE_USER: null,
+	UPDATE_USER: null
 });

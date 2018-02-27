@@ -35,7 +35,7 @@ import './itemViewCSS.css';
 
 class ItemView extends React.Component{
     constructor(props) {
-        super(props);
+        super(props);        
         /**
         *   loadingStatus:0 (loading)
         *   loadingStatus:1 (got result)
@@ -45,7 +45,7 @@ class ItemView extends React.Component{
             showpopup: false,
             filteredItems: [],
             orignalItems: [],
-            loadingStatus:0,
+            loadingStatus: 0,
             confirmDialogOptions: {
                 showConfirmDialog: false,
                 heading: "Delete Item",
@@ -215,15 +215,29 @@ class ItemView extends React.Component{
     }
 
     rowElement(item, index) {
-        return(
-            <tr key={index}>
-                <td>{item.item_code}</td>
-                <td>{item.base}</td>
-                <td>{item.price}</td>
-                <td>{item.description}</td>
-                <td><span className="padding10 handCursor" data-itemid={item.item_id} onClick={this.editItem}><IconEdit width="18" height="18"/></span><span data-itemid={item.item_id} className="padding10 handCursor" onClick={this.deleteItem}><IconDelete width="18" height="18"/></span></td>
-            </tr>
-        );
+        let token = sessionStorage.getItem("token");
+        var decoded = decodeToken(token);
+        if(decoded.role === "ADMIN") {
+            return(
+                <tr key={index}>
+                    <td>{item.item_code}</td>
+                    <td>{item.base}</td>
+                    <td>{item.price}</td>
+                    <td>{item.description}</td>
+                    <td><span className="padding10 handCursor" data-itemid={item.item_id} onClick={this.editItem}><IconEdit width="18" height="18"/></span><span data-itemid={item.item_id} className="padding10 handCursor" onClick={this.deleteItem}><IconDelete width="18" height="18"/></span></td>
+                </tr>
+            );
+        }
+        else {
+            return(
+                <tr key={index}>
+                    <td>{item.item_code}</td>
+                    <td>{item.base}</td>
+                    <td>{item.price}</td>
+                    <td>{item.description}</td>
+                </tr>
+            );
+        }
     }
 
     checkAuthorization() {
@@ -279,7 +293,6 @@ class ItemView extends React.Component{
                                     <th>Base</th>
                                     <th>Price</th>
                                     <th>Description</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

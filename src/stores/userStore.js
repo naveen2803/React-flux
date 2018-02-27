@@ -110,6 +110,37 @@ Dispatcher.register(function(action) {
             break;
         }
 
+        case ActionTypes.UPDATE_USER: {
+            // call service to check the login credentials and trigger event accordingly
+            var user = {
+                'token': action.data.token,
+                'user_id': action.data.user.user_id,
+                'firstname': action.data.user.firstname,
+                'lastname': action.data.user.lastname,
+                'address': action.data.user.address,
+                'phone': action.data.user.phone,
+                'email': action.data.user.email,
+                'role': action.data.user.role
+            };
+            var options = {
+                url: getBase() + '/updateUser',
+                method: "POST",
+                form: user
+            };
+
+            request(options, function (error, response, body) {
+                let requestStatus = "ERROR";
+                if (!error && response.statusCode == 200) {
+                    var result = JSON.parse(body);
+                    if(result.code == undefined) {
+                        requestStatus = "SUCCESS";
+                    }
+                    UserStore.emitChange(EventTypes.UPDATE_USER_EVENT, {eventName: "UPDATE_USER_EVENT", user: user, status: requestStatus});
+                }
+            })
+            break;
+        }
+
         default:
             // no op
     }

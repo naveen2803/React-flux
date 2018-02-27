@@ -13,6 +13,7 @@ import IconLoading from '../../assets/iconLoading';
 import IconCloudError from '../../assets/iconCloudError';
 import IconEdit from '../../assets/iconEdit';
 import IconDelete from '../../assets/iconDelete';
+import _ from 'lodash';
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.css';
@@ -27,7 +28,7 @@ import {    TabContent, TabPane,
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
-import AddUserPopup from './addUserPopup';
+import AddEditUserPopup from './add_editUserPopup';
 import ConfirmDialog from '../confirmDialog/confirmDialog';
 import { Table } from 'reactstrap';
 import './userViewCSS.css';
@@ -41,6 +42,7 @@ class UserView extends React.Component{
         *   loadingStatus:2 (error)
         **/
         this.state = {
+            isEditMode: false,
             showpopup: false,
             filteredUsers: [],
             orignalUsers: [],
@@ -53,6 +55,17 @@ class UserView extends React.Component{
                 actionType: ActionTypes.DELETE_USER,
                 user_id: "",
                 bodyMessage: "Are you sure you want to delete the user?"
+            },
+            user: {
+                firstname: "",
+                lastname: "",
+                address: "",
+                phone: "",
+                email: "",
+                username: "",
+                password: "",
+                role: "USER",
+                user_id: ""
             }
         };
 
@@ -175,7 +188,12 @@ class UserView extends React.Component{
     }
 
     editUser(event) {
-        console.log(event.currentTarget.getAttribute("data-userid"));
+        let userToEdit = _.filter(this.state.orignalUsers, function(user) { return (user.user_id == event.currentTarget.getAttribute("data-userid")) })[0];
+        this.setState({
+            user: userToEdit,
+            isEditMode: true,
+            showPopup: true
+        });
     }
 
     deleteUser(event) {
@@ -215,7 +233,7 @@ class UserView extends React.Component{
                 return(
                     <div>
                         <HeaderComp {...this.props} title="Users" visibleStyle={this.state.serverBusy}/>
-                        <AddUserPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} existingUsers={this.state.orignalUsers}/>
+                        <AddEditUserPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} existingUsers={this.state.orignalUsers} user={this.state.user} isEditMode={this.state.isEditMode}/>
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
                         <div className="userView_actionBarContainerStyle">
                             <div className="userView_actionBarItemStyle">
