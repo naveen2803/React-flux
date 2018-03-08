@@ -62,13 +62,13 @@ class App extends Component {
                         password={this.state.password}
                         resetValues={this.resetValues}
                         onChange={this.onChange}/>} />
-                    <Route exact path="/items" component={Items}/>
-                    <Route exact path="/supplierOrders" component={SupplierOrders}/>
-                    <Route exact path="/customerOrders" component={CustomerOrders}/>
-                    <Route exact path="/addOrder" component={AddOrder}/>
-                    <Route exact path="/customers" component={Customers}/>
-                    <Route exact path="/suppliers" component={Suppliers}/>
-                    <Route exact path="/users" component={Users}/>
+                    <Route path="/items" component={Items}/>
+                    <Route path="/supplierOrders" component={SupplierOrders}/>
+                    <Route path="/customerOrders" component={CustomerOrders}/>
+                    <Route path="/addOrder" component={AddOrder}/>
+                    <Route path="/customers" component={Customers}/>
+                    <Route path="/suppliers" component={Suppliers}/>
+                    <Route path="/users" component={Users}/>
                     <Route path="/notAuthorised" component={UnAuthorised}/>
                     <Route component={PageNotFound}/>
                 </Switch>

@@ -14,6 +14,8 @@ import IconCloudError from '../../assets/iconCloudError';
 import IconEdit from '../../assets/iconEdit';
 import IconDelete from '../../assets/iconDelete';
 import ConfirmDialog from '../confirmDialog/confirmDialog';
+import SupplierList from './supplierList';
+import SupplierDetails from './supplierDetails';
 import _ from 'lodash';
 
 import toastr from 'toastr';
@@ -24,13 +26,17 @@ import {    TabContent, TabPane,
             Nav, NavItem, NavLink,
             Card, CardTitle, CardText,
             Row, Col,
-            Button, Input,
+            Button, Input, Table,
             FormGroup, Form } from 'reactstrap';
+            
+import {    Route,
+            Switch,
+            Link } from 'react-router-dom';   
+                     
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
 import AddEditSupplierPopup from './add_editSupplierPopup';
-import { Table } from 'reactstrap';
 import './supplierViewCSS.css';
 
 class SupplierView extends React.Component{
@@ -75,6 +81,7 @@ class SupplierView extends React.Component{
         this.toggleConfirmPopupProp = this.toggleConfirmPopupProp.bind(this);
         this.cb_onSupplierDeleteResult = this.cb_onSupplierDeleteResult.bind(this);
         this.cb_onSupplierUpdateResult = this.cb_onSupplierUpdateResult.bind(this);
+        this.rowElement = this.rowElement.bind(this);
 
         // Action calls
         SupplierActions.getSuppliers(sessionStorage.getItem("token"));
@@ -216,7 +223,11 @@ class SupplierView extends React.Component{
     rowElement(item, index) {
         return(
             <tr key={index}>
-                <td>{item.s_name}</td>
+                <td>
+                    <Link to={`${this.props.match.url}/${item.s_id}`}>
+                        {item.s_name}
+                    </Link>
+                </td>
                 <td>{item.s_address}</td>
                 <td>{item.s_phone}</td>
                 <td>{item.description}</td>
@@ -236,30 +247,21 @@ class SupplierView extends React.Component{
                         <HeaderComp {...this.props} title="Suppliers"/>
                         <AddEditSupplierPopup showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} supplier={this.state.supplier} isEditMode={this.state.isEditMode}/>
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
-                        <div className="supplierView_actionBarContainerStyle">
-                            <div className="supplierView_actionBarItemStyle">
-                                <Button onClick={this.showAddSupplierPopup} className="appButtonStyle">Add Supplier</Button>
-                            </div>
-                            <div className="supplierView_actionBarItemStyle">
-                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                            </div>
-                        </div>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Phone</th>
-                                    <th>Description</th>
-                                    <th>GST</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="supplierView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="supplierView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="supplierView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="supplierView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                            {this.state.filteredSuppliers.map(this.rowElement.bind(this))}
-                            </tbody>
-                      </Table>
+                        <Switch>
+                            <Route exact path="/suppliers" render={(props) => (
+                                <SupplierList {...props}
+                                                showAddSupplierPopup={this.showAddSupplierPopup}
+                                                updateSearch={this.updateSearch}
+                                                loadingStatus={this.state.loadingStatus}
+                                                filteredSuppliers={this.state.filteredSuppliers}
+                                                rowElement={this.rowElement}/>
+                          )}/>           
+                          
+                          <Route path={`${this.props.match.url}/:s_id`} render={(props) => (
+                              <SupplierDetails {...props} 
+                                                supplier={this.state.orignalSuppliers.filter(supplier => supplier.s_id === parseInt(props.match.params.s_id))}/>
+                          )}/>
+                      </Switch>
                     </div>
                 );
             }

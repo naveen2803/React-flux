@@ -26,6 +26,12 @@ import {    TabContent, TabPane,
             Row, Col,
             Button, Input,
             FormGroup, Form } from 'reactstrap';
+
+import {    Route,
+            Switch,
+            Link } from 'react-router-dom';            
+
+import ItemSuppliers from './itemSuppliers';            
 import classnames from 'classnames';
 import { Redirect } from 'react-router-dom'
 import HeaderComp from '../header/headerView';
@@ -35,7 +41,7 @@ import './itemViewCSS.css';
 
 class ItemView extends React.Component{
     constructor(props) {
-        super(props);        
+        super(props);     
         /**
         *   loadingStatus:0 (loading)
         *   loadingStatus:1 (got result)
@@ -224,6 +230,11 @@ class ItemView extends React.Component{
                     <td>{item.base}</td>
                     <td>{item.price}</td>
                     <td>{item.description}</td>
+                    <td>
+                        <Link to={`${this.props.match.url}/${item.item_id}/suppliers`}>
+                            Show suppliers
+                        </Link>
+                    </td>
                     <td><span className="padding10 handCursor" data-itemid={item.item_id} onClick={this.editItem}><IconEdit width="18" height="18"/></span><span data-itemid={item.item_id} className="padding10 handCursor" onClick={this.deleteItem}><IconDelete width="18" height="18"/></span></td>
                 </tr>
             );
@@ -250,29 +261,41 @@ class ItemView extends React.Component{
                         <HeaderComp {...this.props} title="Items"/>
                         <AddEditItemPopup {...this.props} showPopup={this.state.showPopup} togglePopup={this.togglePopupProp} item={this.state.item} items={this.state.orignalItems} isEditMode={this.state.isEditMode}/>
                         <ConfirmDialog options={this.state.confirmDialogOptions} togglePopup={this.toggleConfirmPopupProp}/>
-                        <div className="itemView_actionBarContainerStyle">
-                            <div className="itemView_actionBarItemStyle">
-                                <Button className="appButtonStyle" onClick={this.showAddItemPopup}>Add Item</Button>
-                            </div>
-                            <div className="itemView_actionBarItemStyle">
-                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
-                            </div>
-                        </div>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>Item Code</th>
-                                    <th>Base</th>
-                                    <th>Price</th>
-                                    <th>Description</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
-                            {this.state.filteredItems.map(this.rowElement.bind(this))}
-                            </tbody>
-                      </Table>
+                        
+                        <Switch>
+                            <Route exact path="/items" render={(props) => (
+                                    <div>
+                                        <div className="itemView_actionBarContainerStyle">
+                                            <div className="itemView_actionBarItemStyle">
+                                                <Button className="appButtonStyle" onClick={this.showAddItemPopup}>Add Item</Button>
+                                            </div>
+                                            <div className="itemView_actionBarItemStyle">
+                                                <Input type="text" name="searchBar" id="searchBar" onChange={this.updateSearch} placeholder="Search"/>
+                                            </div>
+                                        </div>
+                                        <Table responsive>
+                                            <thead>
+                                                <tr>
+                                                    <th>Item Code</th>
+                                                    <th>Base</th>
+                                                    <th>Price</th>
+                                                    <th>Description</th>
+                                                    <th>Suppliers</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {this.state.loadingStatus == 0?<tr><td colSpan="5" height="100px"><div className="itemView_loadingContainerStyle"><IconLoading width="50" height="40"/><span className="itemView_loadingTextStyle">Loading...</span></div></td></tr>:(this.state.loadingStatus == 1?<tr className="hideStyle"><td></td></tr>:<tr><td colSpan="5" height="150px"><div className="itemView_loadingContainerStyle"><IconCloudError width="80" height="100"/><span className="itemView_errorTextStyle">Error loading the data</span></div></td></tr>)}
+                                            {this.state.filteredItems.map(this.rowElement.bind(this))}
+                                            </tbody>
+                                      </Table>
+                                    </div> 
+                            )}/>
+                                
+                          <Route path={`${this.props.match.url}/:item_id/suppliers`} render={(props) => (
+                              <ItemSuppliers {...props} item={this.state.orignalItems.filter(item => item.item_id === parseInt(props.match.params.item_id))}/>
+                          )}/>
+                      </Switch>
                     </div>
                 );
             }

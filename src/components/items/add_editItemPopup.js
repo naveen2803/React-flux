@@ -19,6 +19,7 @@ import ItemActions from '../../actions/itemActions';
 import _ from 'lodash';
 import toastr from 'toastr';
 import 'toastr/build/toastr.css'
+import './addItemPopupCSS.css';
 
 class AddItemPopup extends React.Component{
     constructor(props) {
@@ -142,7 +143,7 @@ class AddItemPopup extends React.Component{
             user: updatedUser
         });
     }
-
+    
     clearItemState() {
         this.setState({
             item: {

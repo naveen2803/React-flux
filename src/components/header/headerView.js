@@ -93,7 +93,10 @@ class HeaderComp extends React.Component{
 
     toggleModel() {
         this.setState({
-          modal: !this.state.modal
+          modal: !this.state.modal,
+          oldPassword: "",
+          newPassword: "",
+          reTypeNewPassword: ""
         });
     }
 
