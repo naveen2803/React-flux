@@ -65,7 +65,7 @@ Dispatcher.register(function(action) {
             var options = {
                 url: getBase() + '/addSupplier',
                 method: "POST",
-                form: supplier 
+                form: supplier
             };
 
             request(options, function (error, response, body) {

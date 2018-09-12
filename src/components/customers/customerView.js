@@ -64,7 +64,7 @@ class CustomerView extends React.Component{
                 c_id: ""
             }
         };
-        
+
         this.updateSearch = this.updateSearch.bind(this);
         this.cb_onGetCustomersResult = this.cb_onGetCustomersResult.bind(this);
         this.cb_onAddCustomerResult = this.cb_onAddCustomerResult.bind(this);
@@ -101,7 +101,7 @@ class CustomerView extends React.Component{
     cb_onCustomerUpdateResult(event) {
         console.log(event);
     }
-    
+
     cb_onAddCustomerResult(event) {
         if(event.status === "SUCCESS") {
             this.setState({
@@ -116,7 +116,7 @@ class CustomerView extends React.Component{
             toastr.error("Adding the customer", "Error");
         }
     }
-    
+
     cb_onGetCustomersResult(event) {
         if(event.status === "SUCCESS") {
             this.setState({
@@ -132,7 +132,7 @@ class CustomerView extends React.Component{
             });
         }
     }
-    
+
     cb_onCustomerDeleteResult(event) {
         if(event.status === "SUCCESS") {
             var arr = this.state.orignalCustomers.filter(customer => customer.c_id != event.c_id);
@@ -150,7 +150,7 @@ class CustomerView extends React.Component{
             toastr.error("Deleting the customer", "Error");
         }
     }
-    
+
     showAddCustomerPopup() {
         this.setState({
             showPopup: true,
@@ -165,13 +165,13 @@ class CustomerView extends React.Component{
             isEditMode: false
         });
     }
-    
+
     togglePopupProp() {
         this.setState({
             showPopup: false
         });
     }
-    
+
     toggleConfirmPopupProp() {
         this.setState({
             confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
@@ -179,7 +179,7 @@ class CustomerView extends React.Component{
             })
         });
     }
-    
+
     editCustomer(event) {
         let customerToEdit = _.filter(this.state.orignalCustomers, function(customer) { return (customer.c_id == event.currentTarget.getAttribute("data-customerid")) })[0];
         this.setState({
@@ -188,7 +188,7 @@ class CustomerView extends React.Component{
             showPopup: true
         });
     }
-    
+
     deleteCustomer(event) {
         this.setState({
             confirmDialogOptions: Object.assign(this.state.confirmDialogOptions, {
