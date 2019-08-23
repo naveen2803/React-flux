@@ -30,25 +30,25 @@ Dispatcher.register(function(action) {
     switch(action.actionType) {
         case ActionTypes.LOGIN: {
             // call service to check the login credentials and trigger event accordingly
-            var options = {
-                url: getBase() + '/checkUser',
-                method: "POST",
-                form: {'username': action.data.username, 'password': action.data.password}
-            };
+            // var options = {
+            //     url: getBase() + '/checkUser',
+            //     method: "POST",
+            //     form: {'username': action.data.username, 'password': action.data.password}
+            // };
 
-            request(options, function (error, response, body) {
-                let requestStatus = "ERROR";
-                if (!error && response.statusCode == 200) {
-                    let userData;
-                    var result = JSON.parse(body);
-                    if(result.length > 0) {
-                        requestStatus = "SUCCESS";
-                        userData = result;
-                    }
-                    LoginStore.emitChange(EventTypes.LOGIN_EVENT, {eventName: "Login_Event", secret: "secret key", user: userData, status: requestStatus});
-                }
-            });
-
+            // request(options, function (error, response, body) {
+            //     let requestStatus = "ERROR";
+            //     if (!error && response.statusCode == 200) {
+            //         let userData;
+            //         var result = JSON.parse(body);
+            //         if(result.length > 0) {
+            //             requestStatus = "SUCCESS";
+            //             userData = result;
+            //         }
+            //         LoginStore.emitChange(EventTypes.LOGIN_EVENT, {eventName: "Login_Event", secret: "secret key", user: userData, status: requestStatus});
+            //     }
+            // });
+            LoginStore.emitChange(EventTypes.LOGIN_EVENT, {eventName: "Login_Event", secret: "secret key", user: [{username: 'naveen', role: 'USER'}], status: 'SUCCESS'});
             break;
         }
         case ActionTypes.LOGOUT: {
